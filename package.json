@@ -9,13 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/react": "^2.7.2",
+    "@prisma/client": "^6.4.1",
+    "@tiptap/pm": "^2.11.5",
+    "@tiptap/react": "^2.11.5",
+    "@tiptap/starter-kit": "^2.11.5",
+    "framer-motion": "^12.4.7",
+    "lucide-react": "^0.476.0",
+    "next": "15.2.0",
+    "prisma": "^6.4.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.2.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "@eslint/eslintrc": "^3"
