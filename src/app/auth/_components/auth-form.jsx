@@ -1,5 +1,6 @@
 "use client";
 import {
+  addToast,
   Card,
   CardBody,
   Tabs,
@@ -10,9 +11,9 @@ import {
   Form,
 } from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { GoogleIcon } from "./google-icon";
-import { registerAction } from "../_actions/register";
+import { loginAction, registerAction } from "../_actions/authenticate";
 
 export const AuthForm = () => {
   const searchParams = useSearchParams();
@@ -21,6 +22,7 @@ export const AuthForm = () => {
   const [selected, setSelected] = useState(selectedTab || "login");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loginState, formAction, isPending] = useActionState(loginAction, null);
 
   const onTabChange = (key) => {
     setSelected(key);
@@ -45,7 +47,6 @@ export const AuthForm = () => {
           "password must 8 character and contains lower, upper, number, and special character",
       });
       setIsLoading(false);
-      console.log(errors);
       return;
     }
 
@@ -67,6 +68,19 @@ export const AuthForm = () => {
     router.push("/");
   };
 
+  useEffect(() => {
+    console.log(loginState);
+    if (loginState?.success) {
+      redirect("/");
+    } else if (!loginState?.success && loginState?.message) {
+      addToast({
+        title: "Login failed",
+        description: loginState?.message,
+        color: "danger",
+      });
+    }
+  }, [loginState]);
+
   return (
     <main className="w-screen h-screen flex items-center justify-center">
       <Card className="max-w-full w-[340px] min-h-[400px] max-h-[440px]">
@@ -84,6 +98,7 @@ export const AuthForm = () => {
                   className="flex flex-col gap-4 items-center"
                   validationErrors={errors}
                   validationBehavior="native"
+                  action={formAction}
                 >
                   <Input
                     isRequired
@@ -109,8 +124,14 @@ export const AuthForm = () => {
                       Sign up
                     </Link>
                   </p>
-                  <Button fullWidth color="warning" className="text-white">
-                    Login
+                  <Button
+                    fullWidth
+                    color="warning"
+                    type="submit"
+                    isLoading={isPending}
+                    className="text-white"
+                  >
+                    Sign in
                   </Button>
                 </Form>
                 <form className="mt-2">
@@ -159,7 +180,7 @@ export const AuthForm = () => {
                     onPress={() => setSelected("login")}
                     className="text-amber-600"
                   >
-                    Login
+                    Sign in
                   </Link>
                 </p>
                 <Button

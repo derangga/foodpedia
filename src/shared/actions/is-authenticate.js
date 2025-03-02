@@ -13,10 +13,16 @@ export async function isAuthenticateAction() {
   if (!sessionId || sessionId.value === "") return { isAuthenticate: false };
 
   const session = await prisma.session.findUnique({
-    where: { session: sessionId.value },
+    where: {
+      session: sessionId.value,
+      deletedAt: null,
+    },
   });
 
-  if (!session) return { isAuthenticate: false };
+  if (!session) {
+    data.delete("session_id");
+    return { isAuthenticate: false };
+  }
 
   const now = new Date();
   if (session.expiresAt < now) return { isAuthenticate: false };
