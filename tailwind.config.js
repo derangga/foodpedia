@@ -9,6 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      poppins: ["Poppins", "sans-serif"],
+    },
   },
   darkMode: "class",
   plugins: [heroui()],
