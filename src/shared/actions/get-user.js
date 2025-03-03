@@ -18,7 +18,6 @@ export async function getUserByEmailAction(email) {
   const user = await prisma.user.findUnique({
     where: {
       email: email,
-      deletedAt: null,
     },
   });
 

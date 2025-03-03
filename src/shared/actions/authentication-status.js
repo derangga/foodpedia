@@ -1,15 +1,17 @@
+"use server";
 import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function isAuthenticateAction() {
-  const { data, error } = await tryCatch(cookies());
+export async function authenticationStatus() {
+  const nextCookie = await tryCatch(cookies());
 
-  if (error) {
-    console.log(`validateAuthAction [ERROR]: ${error}`);
+  if (nextCookie.error) {
+    console.log(`validateAuthAction [ERROR]: ${nextCookie.error}`);
   }
+  const cookie = nextCookie.data;
 
-  const sessionId = data.get("session_id");
+  const sessionId = cookie.get("session_id");
   if (!sessionId || sessionId.value === "") return { isAuthenticate: false };
 
   const session = await prisma.session.findUnique({
@@ -20,8 +22,7 @@ export async function isAuthenticateAction() {
   });
 
   if (!session) {
-    data.delete("session_id");
-    return { isAuthenticate: false };
+    return { isAuthenticate: false, sessionId: sessionId.value };
   }
 
   const now = new Date();
