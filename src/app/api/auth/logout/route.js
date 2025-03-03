@@ -1,30 +1,26 @@
-"use server";
-
 import { prisma } from "@/libs/postgres";
+import responseBuilder from "@/utils/response-builder";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function logoutActions() {
-  const response = (success, message) => {
-    return { success, message };
-  };
-
-  const cookie = await tryCatch(cookies());
-  if (cookie.error) {
-    console.log(`logout-action [ERROR]: ${cookie.error}`);
-    return response(false, "failed read cookies");
+export async function POST() {
+  const nextCookie = await tryCatch(cookies());
+  if (nextCookie.error) {
+    console.log(`logout-action [ERROR]: ${nextCookie.error}`);
+    return responseBuilder({ message: "Bad Request" }, 400);
   }
 
-  const sessionCookie = cookie.data.get("session_id");
+  const sessionCookie = nextCookie.data.get("session_id");
   if (!sessionCookie || sessionCookie.value === "") {
-    return response(true, "");
+    return responseBuilder();
   }
 
   const session = await prisma.session.findUnique({
     where: { session: sessionCookie.value },
   });
   if (session.deletedAt) {
-    return response(true, "");
+    nextCookie.data.delete("session_id");
+    return responseBuilder();
   }
 
   const now = new Date();
@@ -37,9 +33,9 @@ export async function logoutActions() {
 
   if (result.error) {
     console.log(`logout-action [ERROR]: ${result.error}`);
-    return response(false, "failed execute logout");
+    return responseBuilder({ message: "failed execute logout" }, 422);
   }
-  cookie.data.delete("session_id");
+  nextCookie.data.delete("session_id");
 
-  return response(true, "");
+  return responseBuilder();
 }

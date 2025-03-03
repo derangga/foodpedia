@@ -4,6 +4,10 @@ import bcrypt from "bcrypt";
 import { provideSessionAction } from "@/shared/actions/session";
 import { tryCatch } from "@/utils/try-catch";
 import { getUserByEmailAction } from "@/shared/actions/get-user";
+import { cookies } from "next/headers";
+import * as arctic from "arctic";
+import { googleClient } from "@/libs/google";
+import { redirect } from "next/navigation";
 
 export async function loginAction(_, formData) {
   const email = formData.get("email");
@@ -26,6 +30,28 @@ export async function loginAction(_, formData) {
   await provideSessionAction(user.id);
 
   return response(true, "");
+}
+
+export async function loginGoogleAction(_, formData) {
+  const nextCookie = await tryCatch(cookies());
+  if (nextCookie.error) {
+    console.log(`login-google-action: ${nextCookie.error}`);
+    return;
+  }
+
+  const cookie = nextCookie.data;
+  const state = arctic.generateState();
+  const codeVerifier = arctic.generateCodeVerifier();
+  const scopes = ["openid", "profile", "email"];
+  const url = googleClient().createAuthorizationURL(
+    state,
+    codeVerifier,
+    scopes
+  );
+
+  cookie.set("codeVerifier", codeVerifier, { httpOnly: true });
+
+  redirect(`${url.href}`);
 }
 
 export async function registerAction(formData) {

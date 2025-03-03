@@ -13,11 +13,11 @@ export async function provideSessionAction(userId) {
     },
   });
 
-  const { data, error } = await tryCatch(cookies());
-  if (error) {
-    console.log(`session-action [ERROR]: ${error}`);
+  const nextCookie = await tryCatch(cookies());
+  if (nextCookie.error) {
+    console.log(`session-action [ERROR]: ${nextCookie.error}`);
   }
-  data.set("session_id", session.session, {
+  nextCookie.data.set("session_id", session.session, {
     httpOnly: true,
     expires: date,
     secure: process.env.NODE_ENV === "production",

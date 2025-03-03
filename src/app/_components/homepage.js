@@ -14,12 +14,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { logoutActions } from "../_actions/logout";
+import { tryCatch } from "@/utils/try-catch";
 
-export const Homepage = ({ authenticated, currentUser }) => {
+export const Homepage = ({ authStatus, currentUser }) => {
   const ref = useRef(null);
-  const [isLogin, setIsLogin] = useState(authenticated || false);
+  const [isLogin, setIsLogin] = useState(authStatus?.isAuthenticate || false);
   const router = useRouter();
+  const executeLogout = async () => {
+    console.log("cal logout");
+    return await tryCatch(
+      fetch("/api/auth/logout", {
+        method: "POST",
+      })
+    );
+  };
 
   useEffect(() => {
     if (!ref.current) return;
@@ -39,10 +47,21 @@ export const Homepage = ({ authenticated, currentUser }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!authStatus.isAuthenticate && authStatus.sessionId) {
+      executeLogout().then((r) => {
+        if (r.data.ok) {
+          setIsLogin(false);
+        }
+      });
+    }
+  }, [authStatus]);
+
   const onCornerMenuAction = async (key) => {
     if (key === "sign-out") {
-      const result = await logoutActions();
-      if (!result.success) return;
+      const result = await executeLogout();
+      if (result.error) return;
+
       setIsLogin(false);
     } else {
       router.push(`/${key}`);
@@ -116,14 +135,23 @@ export const Homepage = ({ authenticated, currentUser }) => {
             </Dropdown>
           ) : (
             <div className="space-x-2">
-              <Link href={"/auth"}>
-                <Button variant="light">Sign in</Button>
-              </Link>
-              <Link href={"/auth?tab=sign-up"}>
-                <Button className="border-black font-mono" variant="bordered">
-                  Sign up
-                </Button>
-              </Link>
+              <Button
+                variant="light"
+                onPress={(e) => {
+                  router.push("/auth");
+                }}
+              >
+                Sign in
+              </Button>
+              <Button
+                className="border-black font-mono"
+                variant="bordered"
+                onPress={(e) => {
+                  router.push("/auth?tab=sign-up");
+                }}
+              >
+                Sign up
+              </Button>
             </div>
           )}
         </div>

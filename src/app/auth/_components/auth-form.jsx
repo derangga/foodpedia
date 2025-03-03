@@ -13,7 +13,11 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { GoogleIcon } from "./google-icon";
-import { loginAction, registerAction } from "../_actions/authenticate";
+import {
+  loginAction,
+  loginGoogleAction,
+  registerAction,
+} from "../_actions/authenticate";
 
 export const AuthForm = () => {
   const searchParams = useSearchParams();
@@ -22,7 +26,14 @@ export const AuthForm = () => {
   const [selected, setSelected] = useState(selectedTab || "login");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loginState, formAction, isPending] = useActionState(loginAction, null);
+  const [loginState, formAction, isLoginLoading] = useActionState(
+    loginAction,
+    null
+  );
+  const [googleState, googleFormAction, isGoogleLoading] = useActionState(
+    loginGoogleAction,
+    null
+  );
 
   const onTabChange = (key) => {
     setSelected(key);
@@ -128,17 +139,18 @@ export const AuthForm = () => {
                     fullWidth
                     color="warning"
                     type="submit"
-                    isLoading={isPending}
+                    isLoading={isLoginLoading}
                     className="text-white"
                   >
                     Sign in
                   </Button>
                 </Form>
-                <form className="mt-2">
+                <form className="mt-2" action={googleFormAction}>
                   <Button
                     variant="bordered"
                     type="submit"
                     fullWidth
+                    isLoading={isGoogleLoading}
                     startContent={<GoogleIcon />}
                   >
                     Sign in with Google
