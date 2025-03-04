@@ -9,7 +9,16 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
-import { CircleUserRound, Earth, Heart, Search } from "lucide-react";
+import {
+  CircleUserRound,
+  Earth,
+  FilePenLine,
+  Heart,
+  LogOut,
+  Search,
+  Settings,
+  SquareUserRound,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -109,6 +118,15 @@ export const Homepage = ({ authStatus, currentUser }) => {
             }
             classNames={"w-44"}
           />
+          {isLogin && (
+            <Link
+              href={"/recipes/new"}
+              className="flex flex-row items-center px-3 space-x-2 rounded-lg text-gray-400 hover:cursor-pointer hover:text-black"
+            >
+              <FilePenLine />
+              <div>Write</div>
+            </Link>
+          )}
           {isLogin ? (
             <Dropdown>
               <DropdownTrigger>
@@ -122,14 +140,27 @@ export const Homepage = ({ authStatus, currentUser }) => {
                 aria-label="Static Actions"
                 onAction={(key) => onCornerMenuAction(key)}
               >
-                <DropdownItem key="profile">Profile</DropdownItem>
-                <DropdownItem key="setting">Settings</DropdownItem>
+                <DropdownItem key="profile">
+                  <div className="flex flex-row space-x-4 items-center">
+                    <SquareUserRound size={20} />
+                    <div>Profile</div>
+                  </div>
+                </DropdownItem>
+                <DropdownItem key="setting">
+                  <div className="flex flex-row space-x-4 items-center">
+                    <Settings size={20} />
+                    <div>Settings</div>
+                  </div>
+                </DropdownItem>
                 <DropdownItem
                   key="sign-out"
                   className="text-danger"
                   color="danger"
                 >
-                  Sign out
+                  <div className="flex flex-row space-x-4 items-center">
+                    <LogOut size={20} />
+                    <div>Sign out</div>
+                  </div>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -228,6 +259,7 @@ export const Homepage = ({ authStatus, currentUser }) => {
               <div className="grow relative w-full rounded-t-xl overflow-hidden">
                 <Image
                   src={"/assets/ai-chef.webp"}
+                  sizes="(max-width: 12rem)"
                   fill
                   style={{ objectFit: "cover" }}
                   alt="header-image"
