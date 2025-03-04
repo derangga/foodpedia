@@ -1,29 +1,20 @@
 "use client";
 
 import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
-import {
-  Button,
-  Input,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import {
   CircleUserRound,
   Earth,
   FilePenLine,
   Heart,
-  LogOut,
   Search,
-  Settings,
-  SquareUserRound,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { tryCatch } from "@/utils/try-catch";
+import { AvatarMenu } from "@/shared/components/avatar-menu";
 
 export const Homepage = ({ authStatus, currentUser }) => {
   const ref = useRef(null);
@@ -77,10 +68,6 @@ export const Homepage = ({ authStatus, currentUser }) => {
     }
   };
 
-  const avatar = () => {
-    return currentUser.email.charAt(0).toUpperCase();
-  };
-
   return (
     <>
       <header
@@ -128,42 +115,10 @@ export const Homepage = ({ authStatus, currentUser }) => {
             </Link>
           )}
           {isLogin ? (
-            <Dropdown>
-              <DropdownTrigger>
-                <div className="flex justify-center items-center w-10 h-10 bg-black rounded-full hover:cursor-pointer">
-                  <div className="text-white font-mono font-semibold">
-                    {avatar()}
-                  </div>
-                </div>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Static Actions"
-                onAction={(key) => onCornerMenuAction(key)}
-              >
-                <DropdownItem key="profile">
-                  <div className="flex flex-row space-x-4 items-center">
-                    <SquareUserRound size={20} />
-                    <div>Profile</div>
-                  </div>
-                </DropdownItem>
-                <DropdownItem key="setting">
-                  <div className="flex flex-row space-x-4 items-center">
-                    <Settings size={20} />
-                    <div>Settings</div>
-                  </div>
-                </DropdownItem>
-                <DropdownItem
-                  key="sign-out"
-                  className="text-danger"
-                  color="danger"
-                >
-                  <div className="flex flex-row space-x-4 items-center">
-                    <LogOut size={20} />
-                    <div>Sign out</div>
-                  </div>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <AvatarMenu
+              name={currentUser.email}
+              onCornerMenuAction={onCornerMenuAction}
+            />
           ) : (
             <div className="space-x-2">
               <Button
