@@ -1,16 +1,30 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import TipTap from "../../_components/tiptap";
-import { Button, Chip, Input, Select, SelectItem } from "@heroui/react";
+import { Button, Chip, Input } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
 
 export const NewRecipe = ({ currentUser }) => {
-  const ref = useRef(null);
+  const headerRef = useRef(null);
   const [content, setContent] = useState("");
-  const foodCategory = ["Chinese Food", "Indonesian Food", "Thai Food"];
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  // replace with data from db
+  const foodCategory = [
+    "chinese food",
+    "thai Food",
+    "fruits",
+    "vegetables",
+    "grains",
+    "meats",
+    "nuts and seeds",
+    "condiments and sauces",
+    "legumes",
+    "poultry",
+  ];
 
   const [ingridients, setIngridients] = useState([]);
   const handleContentChange = (content) => {
@@ -18,8 +32,8 @@ export const NewRecipe = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    if (!ref.current) return;
-    const header = ref.current;
+    if (!headerRef.current) return;
+    const header = headerRef.current;
     const onScroll = () => {
       if (window.scrollY > 0) {
         header.dataset.scrolled = "";
@@ -32,6 +46,18 @@ export const NewRecipe = ({ currentUser }) => {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+    };
+  }, [headerRef]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (event.target.id !== "category-btn") {
+        setIsCategoryOpen(false);
+      }
+    }
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -49,12 +75,21 @@ export const NewRecipe = ({ currentUser }) => {
     formEvent.reset();
   };
 
-  const onDeleteIngridient = (position) => {
-    if (position > -1) {
-      const temp = ingridients.splice(position, 1);
-      console.log(temp);
-      setContent(temp);
-    }
+  const onDeleteIngridient = (name) => {
+    const temp = ingridients.filter((e) => e !== name);
+    setIngridients(temp);
+  };
+
+  const onClickCategory = (name) => {
+    if (selectedCategories.includes(name)) return;
+    if (selectedCategories.length >= 4) return;
+
+    setSelectedCategories([...selectedCategories, name]);
+  };
+
+  const onDeleteCategory = (name) => {
+    const temp = selectedCategories.filter((e) => e !== name);
+    setSelectedCategories(temp);
   };
 
   const onPublishContent = async (e) => {
@@ -65,7 +100,7 @@ export const NewRecipe = ({ currentUser }) => {
   return (
     <div className="w-screen">
       <header
-        ref={ref}
+        ref={headerRef}
         className="flex sticky top-0 w-full bg-white z-50 px-6 h-16 items-center data-[scrolled]:shadow-md data-[scrolled]:bg-white transition-all"
       >
         <div className="flex flex-row w-[60rem] mx-auto justify-between items-center">
@@ -80,7 +115,7 @@ export const NewRecipe = ({ currentUser }) => {
           <div className="flex flex-row items-center space-x-4">
             <button
               className="font-poppins px-6 py-1 text-white bg-orange-200 hover:bg-orange-400 hover:cursor-pointer rounded-xl"
-              form="content"
+              form="recipe-form"
             >
               Publish
             </button>
@@ -92,7 +127,7 @@ export const NewRecipe = ({ currentUser }) => {
         </div>
       </header>
       <div className="flex flex-col w-[32rem] mx-auto pb-10">
-        <form id="content" onSubmit={onPublishContent}>
+        <form id="recipe-form" onSubmit={onPublishContent}>
           <Input
             name="title"
             label="Recipe title"
@@ -108,34 +143,58 @@ export const NewRecipe = ({ currentUser }) => {
             variant="bordered"
             className="mt-2"
           />
-          <Select
-            variant="bordered"
-            name="category"
-            label="Select category"
-            className="mt-2"
-          >
-            {foodCategory.map((e) => (
-              <SelectItem key={e.toLowerCase()}>{e}</SelectItem>
-            ))}
-          </Select>
-          <Input
-            name="tags"
-            placeholder="Add tag"
-            variant="bordered"
-            className="mt-2"
-            startContent={
-              <div className="flex flex-row space-y-1">
-                <Chip
-                  onClose={() => console.log("close")}
-                  classNames={{
-                    base: "bg-gray-200",
-                  }}
-                >
-                  Ayam
-                </Chip>
+          <div className="relative">
+            <Input
+              name="category"
+              placeholder="Add category"
+              variant="bordered"
+              className="mt-2"
+              onFocus={() => setIsCategoryOpen(true)}
+              startContent={
+                <div className="flex flex-row gap-1 items-center">
+                  {selectedCategories.map((e, idx) => {
+                    return (
+                      <Chip
+                        key={idx + 1}
+                        onClose={() => onDeleteCategory(e)}
+                        classNames={{
+                          base: "bg-gray-200",
+                        }}
+                      >
+                        {e}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              }
+            />
+            {isCategoryOpen && (
+              <div className="absolute w-full left-0 right-0 mx-auto z-50 py-5 px-4 bg-white border border-gray-300 rounded-md shadow-lg">
+                <div className="flex flex-col space-y-2">
+                  <div className="font-poppins font-semibold text-sm">
+                    Categories
+                  </div>
+                  <div className="flex flex-row flex-wrap gap-2 items-center">
+                    {foodCategory.map((e, idx) => {
+                      return (
+                        <button
+                          key={idx + 1}
+                          id="category-btn"
+                          type="button"
+                          className="px-3 py-1 border rounded-full text-xs hover:cursor-pointer hover:bg-gray-50"
+                          onClick={() => {
+                            onClickCategory(e);
+                          }}
+                        >
+                          {e}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            }
-          />
+            )}
+          </div>
         </form>
         <form className="flex flex-col space-y-2" onSubmit={onAddIngridients}>
           <div className="flex flex-row items-center space-x-2 mt-2">
@@ -168,7 +227,7 @@ export const NewRecipe = ({ currentUser }) => {
                       aria-label="Delete"
                       size="sm"
                       onPress={() => {
-                        onDeleteIngridient(idx);
+                        onDeleteIngridient(e);
                       }}
                     >
                       <Trash2 size={16} />
