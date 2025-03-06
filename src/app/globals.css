@@ -4,11 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
-.ProseMirror ul {
-  padding: 0 1rem;
-  list-style: disc !important;
+.ProseMirror p {
+  @apply mb-0 mt-0;
 }
-.ProseMirror ol {
-  padding: 0 2rem;
-  list-style: decimal !important;
+
+.ProseMirror h2 {
+  @apply my-2;
+}
+
+.ProseMirror ul {
+  @apply mb-2;
 }

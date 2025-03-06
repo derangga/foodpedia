@@ -80,7 +80,6 @@ export const AuthForm = () => {
   };
 
   useEffect(() => {
-    console.log(loginState);
     if (loginState?.success) {
       redirect("/");
     } else if (!loginState?.success && loginState?.message) {
