@@ -1,30 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import TipTap from "../../_components/tiptap";
-import { Button, Chip, Input } from "@heroui/react";
+import { addToast, Button, Chip, Input } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
+import { createRecipeActions } from "../_actions/recipe";
+import { redirect } from "next/navigation";
 
-export const NewRecipe = ({ currentUser }) => {
+export const NewRecipe = ({ currentUser, categories }) => {
   const headerRef = useRef(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState("Step to cook");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  // replace with data from db
-  const foodCategory = [
-    "chinese food",
-    "thai Food",
-    "fruits",
-    "vegetables",
-    "grains",
-    "meats",
-    "nuts and seeds",
-    "condiments and sauces",
-    "legumes",
-    "poultry",
-  ];
 
   const [ingridients, setIngridients] = useState([]);
   const handleContentChange = (content) => {
@@ -65,10 +54,11 @@ export const NewRecipe = ({ currentUser }) => {
 
   const onAddIngridients = (e) => {
     e.preventDefault();
+
     const formEvent = e.currentTarget;
     const form = new FormData(formEvent);
     const ingridient = form.get("ingridient")?.toString();
-
+    console.log(`add ingridient ${ingridient}`);
     if (!ingridient) return;
 
     setIngridients([...ingridients, ingridient]);
@@ -85,6 +75,7 @@ export const NewRecipe = ({ currentUser }) => {
     if (selectedCategories.length >= 4) return;
 
     setSelectedCategories([...selectedCategories, name]);
+    setIsCategoryOpen(false);
   };
 
   const onDeleteCategory = (name) => {
@@ -94,7 +85,26 @@ export const NewRecipe = ({ currentUser }) => {
 
   const onPublishContent = async (e) => {
     e.preventDefault();
-    console.log("submit cuy");
+    const formEvent = e.currentTarget;
+    const formData = new FormData(formEvent);
+    formData.append("content", content);
+    formData.append("ingridients", ingridients);
+    formData.append("categories", selectedCategories);
+
+    const recipe = await createRecipeActions(formData);
+    if (recipe?.error) {
+      addToast({
+        title: "Failed create recipe",
+        description: `${
+          recipe?.error || "please try again to insert the recipe later"
+        }`,
+        color: "danger",
+      });
+
+      return;
+    }
+
+    redirect("/recipes");
   };
 
   return (
@@ -145,26 +155,23 @@ export const NewRecipe = ({ currentUser }) => {
           />
           <div className="relative">
             <Input
-              name="category"
               placeholder="Add category"
               variant="bordered"
               className="mt-2"
               onFocus={() => setIsCategoryOpen(true)}
               startContent={
                 <div className="flex flex-row gap-1 items-center">
-                  {selectedCategories.map((e, idx) => {
-                    return (
-                      <Chip
-                        key={idx + 1}
-                        onClose={() => onDeleteCategory(e)}
-                        classNames={{
-                          base: "bg-gray-200",
-                        }}
-                      >
-                        {e}
-                      </Chip>
-                    );
-                  })}
+                  {selectedCategories.map((e, idx) => (
+                    <Chip
+                      key={idx + 1}
+                      onClose={() => onDeleteCategory(e)}
+                      classNames={{
+                        base: "bg-gray-200",
+                      }}
+                    >
+                      {e}
+                    </Chip>
+                  ))}
                 </div>
               }
             />
@@ -175,21 +182,19 @@ export const NewRecipe = ({ currentUser }) => {
                     Categories
                   </div>
                   <div className="flex flex-row flex-wrap gap-2 items-center">
-                    {foodCategory.map((e, idx) => {
-                      return (
-                        <button
-                          key={idx + 1}
-                          id="category-btn"
-                          type="button"
-                          className="px-3 py-1 border rounded-full text-xs hover:cursor-pointer hover:bg-gray-50"
-                          onClick={() => {
-                            onClickCategory(e);
-                          }}
-                        >
-                          {e}
-                        </button>
-                      );
-                    })}
+                    {categories.map((e, idx) => (
+                      <button
+                        key={idx + 1}
+                        id="category-btn"
+                        type="button"
+                        className="px-3 py-1 border rounded-full text-xs hover:cursor-pointer hover:bg-gray-50"
+                        onClick={() => {
+                          onClickCategory(e);
+                        }}
+                      >
+                        {e}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
