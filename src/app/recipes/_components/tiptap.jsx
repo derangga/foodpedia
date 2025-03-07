@@ -23,7 +23,7 @@ export const TipTap = ({ content, onChange, className }) => {
     editorProps: {
       attributes: {
         class:
-          "prose min-h-[25rem] px-4 py-3 pt-4 justify-start border-2 border-gray-200 focus:border-gray-400 hover:border-gray-300 items-start w-full rounded-b-xl outline-none overflow-scroll",
+          "prose min-h-[24rem] px-4 py-3 pt-4 justify-start border-2 border-gray-200 focus:border-gray-400 hover:border-gray-300 items-start w-full rounded-b-xl outline-none overflow-scroll",
       },
     },
   });
