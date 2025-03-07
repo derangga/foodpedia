@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker-up": "docker compose up -d",
+    "docker-down": "docker compose down",
+    "start-pg": "docker start foodpedia-postgres",
+    "stop-pg": "docker stop foodpedia-postgres"
   },
   "dependencies": {
     "@heroui/react": "^2.7.2",
     "@prisma/adapter-pg": "^6.4.1",
     "@prisma/client": "^6.4.1",
     "@tailwindcss/typography": "^0.5.16",
+    "@tiptap/extension-placeholder": "^2.11.5",
     "@tiptap/extension-underline": "^2.11.5",
     "@tiptap/pm": "^2.11.5",
     "@tiptap/react": "^2.11.5",

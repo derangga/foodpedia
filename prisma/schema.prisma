@@ -70,6 +70,7 @@ model recipe {
   userId        Int
   categories    String[]
   ingridients   String[]
+  story         String? @db.Text
   description   String @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime?

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import TipTap from "../../_components/tiptap";
-import { addToast, Button, Chip, Input } from "@heroui/react";
+import { addToast, Button, Chip, Input, Textarea } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const NewRecipe = ({ currentUser, categories }) => {
   const headerRef = useRef(null);
-  const [content, setContent] = useState("Step to cook");
+  const [content, setContent] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -136,118 +136,122 @@ export const NewRecipe = ({ currentUser, categories }) => {
           </div>
         </div>
       </header>
-      <div className="flex flex-col w-[32rem] mx-auto pb-10">
-        <form id="recipe-form" onSubmit={onPublishContent}>
-          <Input
-            name="title"
-            label="Recipe title"
-            placeholder="Enter your recipe name"
-            variant="bordered"
-            className="mt-2"
-          />
-          <Input
-            name="image"
-            label="Select image"
-            type="file"
-            placeholder="A URL of your image food"
-            variant="bordered"
-            className="mt-2"
-          />
-          <div className="relative">
+      <div className="grid grid-cols-2 w-2/3 mx-auto pt-6 pb-10 gap-4">
+        <div className="flex flex-col">
+          <form id="recipe-form" onSubmit={onPublishContent}>
             <Input
-              placeholder="Add category"
+              name="title"
+              label="Title"
+              placeholder="Title: Baked BBQ Chicken Thighs"
+              variant="bordered"
+            />
+            <Textarea
+              label="Story"
+              placeholder="Share a little more about this dish. What or who inspired you to cook it? What makes it special to you? What's your favourite way to eat it?"
+              className="mt-2"
+              variant="bordered"
+            />
+            <Input
+              name="image"
+              label="Upload recipe photo"
+              type="file"
               variant="bordered"
               className="mt-2"
-              onFocus={() => setIsCategoryOpen(true)}
-              startContent={
-                <div className="flex flex-row gap-1 items-center">
-                  {selectedCategories.map((e, idx) => (
-                    <Chip
-                      key={idx + 1}
-                      onClose={() => onDeleteCategory(e)}
-                      classNames={{
-                        base: "bg-gray-200",
-                      }}
-                    >
-                      {e}
-                    </Chip>
-                  ))}
-                </div>
-              }
             />
-            {isCategoryOpen && (
-              <div className="absolute w-full left-0 right-0 mx-auto z-50 py-5 px-4 bg-white border border-gray-300 rounded-md shadow-lg">
-                <div className="flex flex-col space-y-2">
-                  <div className="font-poppins font-semibold text-sm">
-                    Categories
-                  </div>
-                  <div className="flex flex-row flex-wrap gap-2 items-center">
-                    {categories.map((e, idx) => (
-                      <button
+            <div className="relative">
+              <Input
+                label="Category"
+                placeholder="Food category"
+                variant="bordered"
+                className="mt-2"
+                onFocus={() => setIsCategoryOpen(true)}
+                startContent={
+                  <div className="flex flex-row gap-1 items-center">
+                    {selectedCategories.map((e, idx) => (
+                      <Chip
                         key={idx + 1}
-                        id="category-btn"
-                        type="button"
-                        className="px-3 py-1 border rounded-full text-xs hover:cursor-pointer hover:bg-gray-50"
-                        onClick={() => {
-                          onClickCategory(e);
+                        onClose={() => onDeleteCategory(e)}
+                        classNames={{
+                          base: "bg-gray-200",
                         }}
                       >
                         {e}
-                      </button>
+                      </Chip>
                     ))}
                   </div>
+                }
+              />
+              {isCategoryOpen && (
+                <div className="absolute w-full left-0 right-0 mx-auto z-50 py-5 px-4 bg-white border border-gray-300 rounded-md shadow-lg">
+                  <div className="flex flex-col space-y-2">
+                    <div className="font-poppins font-semibold text-sm">
+                      Categories
+                    </div>
+                    <div className="flex flex-row flex-wrap gap-2 items-center">
+                      {categories.map((e, idx) => (
+                        <button
+                          key={idx + 1}
+                          id="category-btn"
+                          type="button"
+                          className="px-3 py-1 border rounded-full text-xs hover:cursor-pointer hover:bg-gray-50"
+                          onClick={() => {
+                            onClickCategory(e);
+                          }}
+                        >
+                          {e}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </form>
+          <form className="flex flex-col space-y-2" onSubmit={onAddIngridients}>
+            <div className="flex flex-row items-center space-x-2 mt-2">
+              <Input
+                name="ingridient"
+                placeholder="Your recipe ingridients"
+                variant="bordered"
+              />
+              <Button color="warning" className="text-white" type="submit">
+                Add
+              </Button>
+            </div>
+            {ingridients.length === 0 ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-xl h-24 w-full flex p-2 justify-center items-center">
+                <div className="font-poppins text-gray-500">
+                  Empty Ingridients
                 </div>
               </div>
-            )}
-          </div>
-        </form>
-        <form className="flex flex-col space-y-2" onSubmit={onAddIngridients}>
-          <div className="flex flex-row items-center space-x-2 mt-2">
-            <Input
-              name="ingridient"
-              placeholder="Add Ingridient"
-              variant="bordered"
-            />
-            <Button color="warning" className="text-white" type="submit">
-              Add
-            </Button>
-          </div>
-          {ingridients.length === 0 ? (
-            <div className="border-2 border-dashed border-gray-300 rounded-xl h-24 w-full flex p-2 justify-center items-center">
-              <div className="font-poppins text-gray-500">
-                Empty Ingridients
-              </div>
-            </div>
-          ) : (
-            <div className="w-full grid grid-cols-2 gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
-              {ingridients.map((e, idx) => {
-                return (
-                  <div
-                    key={idx + 1}
-                    className="flex flex-row w-full h-fit items-center justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
-                  >
-                    <div>{`${idx + 1}. ${e}`}</div>
-                    <Button
-                      isIconOnly
-                      aria-label="Delete"
-                      size="sm"
-                      onPress={() => {
-                        onDeleteIngridient(e);
-                      }}
+            ) : (
+              <div className="w-full grid grid-cols-2 gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
+                {ingridients.map((e, idx) => {
+                  return (
+                    <div
+                      key={idx + 1}
+                      className="flex flex-row w-full h-fit items-center justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
                     >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </form>
-        <TipTap
-          content={content}
-          onChange={handleContentChange}
-          className="mt-2"
-        />
+                      <div>{`${idx + 1}. ${e}`}</div>
+                      <Button
+                        isIconOnly
+                        aria-label="Delete"
+                        size="sm"
+                        color="danger"
+                        onPress={() => {
+                          onDeleteIngridient(e);
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </form>
+        </div>
+        <TipTap content={content} onChange={handleContentChange} />
       </div>
     </div>
   );

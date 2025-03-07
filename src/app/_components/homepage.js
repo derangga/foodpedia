@@ -1,20 +1,13 @@
 "use client";
 
 import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
-import { Button, Input } from "@heroui/react";
-import {
-  CircleUserRound,
-  Earth,
-  FilePenLine,
-  Heart,
-  Search,
-} from "lucide-react";
+import { CircleUserRound, Earth, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { tryCatch } from "@/utils/try-catch";
-import { AvatarMenu } from "@/shared/components/avatar-menu";
+import { AppHeader } from "@/shared/components/app-header";
 
 export const Homepage = ({ authStatus, currentUser }) => {
   const ref = useRef(null);
@@ -70,78 +63,11 @@ export const Homepage = ({ authStatus, currentUser }) => {
 
   return (
     <>
-      <header
-        ref={ref}
-        className="flex flex-row sticky top-0 w-screen bg-white px-8 h-16 items-center justify-center z-50 data-[scrolled]:shadow-md data-[scrolled]:bg-white transition-all"
-      >
-        <div className="grow">
-          <div className="flex flex-row items-center space-x-4">
-            <Image
-              src={"/assets/foodpedia-logo.png"}
-              alt="foodpedia"
-              width={100}
-              height={100}
-            />
-            <div className="px-4 py-1 rounded-lg hover:bg-slate-50 font-semibold font-mono">
-              Home
-            </div>
-            <div className="px-4 py-1 rounded-lg hover:bg-slate-50 font-semibold font-mono">
-              Recipes
-            </div>
-            <div className="px-4 py-1 rounded-lg hover:bg-slate-50 font-semibold font-mono">
-              AI Chef
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-row justify-end space-x-2">
-          <Input
-            placeholder="Search..."
-            className="w-fit"
-            radius="full"
-            endContent={
-              <div className="p-1 hover:cursor-pointer rounded-full">
-                <Search color="#9E9E9E" />
-              </div>
-            }
-            classNames={"w-44"}
-          />
-          {isLogin && (
-            <Link
-              href={"/recipes/new"}
-              className="flex flex-row items-center px-3 space-x-2 rounded-lg text-gray-400 hover:cursor-pointer hover:text-black"
-            >
-              <FilePenLine />
-              <div>Write</div>
-            </Link>
-          )}
-          {isLogin ? (
-            <AvatarMenu
-              name={currentUser.email}
-              onCornerMenuAction={onCornerMenuAction}
-            />
-          ) : (
-            <div className="space-x-2">
-              <Button
-                variant="light"
-                onPress={(e) => {
-                  router.push("/auth");
-                }}
-              >
-                Sign in
-              </Button>
-              <Button
-                className="border-black font-mono"
-                variant="bordered"
-                onPress={(e) => {
-                  router.push("/auth?tab=sign-up");
-                }}
-              >
-                Sign up
-              </Button>
-            </div>
-          )}
-        </div>
-      </header>
+      <AppHeader
+        isLogin={isLogin}
+        avatarName={currentUser?.email || ""}
+        onCornerMenuAction={onCornerMenuAction}
+      />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
           <div className="relative w-full rounded-xl h-[30rem] overflow-hidden">
