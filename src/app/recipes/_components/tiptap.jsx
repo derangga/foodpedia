@@ -4,10 +4,17 @@ import { TiptapToolbar } from "./tiptap-toolbar";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
+import Placeholder from "@tiptap/extension-placeholder";
 
 export const TipTap = ({ content, onChange, className }) => {
   const editor = useEditor({
-    extensions: [StarterKit, Underline],
+    extensions: [
+      StarterKit,
+      Underline,
+      Placeholder.configure({
+        placeholder: "Write step to cook",
+      }),
+    ],
     immediatelyRender: false,
     content: content || "",
     onUpdate: ({ editor }) => {

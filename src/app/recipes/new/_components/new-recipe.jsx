@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export const NewRecipe = ({ currentUser, categories }) => {
   const headerRef = useRef(null);
-  const [content, setContent] = useState("Step to cook");
+  const [content, setContent] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 
