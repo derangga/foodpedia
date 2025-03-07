@@ -13,6 +13,7 @@
     "stop-pg": "docker stop foodpedia-postgres"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
     "@heroui/react": "^2.7.2",
     "@prisma/adapter-pg": "^6.4.1",
     "@prisma/client": "^6.4.1",

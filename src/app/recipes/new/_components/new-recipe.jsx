@@ -1,7 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import TipTap from "../../_components/tiptap";
-import { addToast, Button, Chip, Input, Textarea } from "@heroui/react";
+import {
+  addToast,
+  Button,
+  Chip,
+  Input,
+  Spinner,
+  Textarea,
+} from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +21,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
   const [content, setContent] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const [ingridients, setIngridients] = useState([]);
   const handleContentChange = (content) => {
@@ -84,14 +92,27 @@ export const NewRecipe = ({ currentUser, categories }) => {
   };
 
   const onPublishContent = async (e) => {
+    setDialogOpen(true);
     e.preventDefault();
     const formEvent = e.currentTarget;
     const formData = new FormData(formEvent);
+    const maxImgSize = 500 * 1000; // max 500kb
+    const image = formData.get("image");
+    if (image.size > maxImgSize) {
+      addToast({
+        title: "Failed create recipe",
+        description: "max image size 500Kb",
+        color: "danger",
+      });
+      return;
+    }
+
     formData.append("content", content);
     formData.append("ingridients", ingridients);
     formData.append("categories", selectedCategories);
 
     const recipe = await createRecipeActions(formData);
+    setDialogOpen(false);
     if (recipe?.error) {
       addToast({
         title: "Failed create recipe",
@@ -100,7 +121,6 @@ export const NewRecipe = ({ currentUser, categories }) => {
         }`,
         color: "danger",
       });
-
       return;
     }
 
@@ -111,32 +131,30 @@ export const NewRecipe = ({ currentUser, categories }) => {
     <div className="w-screen">
       <header
         ref={headerRef}
-        className="flex sticky top-0 w-full bg-white z-50 px-6 h-16 items-center data-[scrolled]:shadow-md data-[scrolled]:bg-white transition-all"
+        className="flex flex-row justify-between sticky items-center top-0 w-full bg-white z-50 px-8 h-16 data-[scrolled]:shadow-md data-[scrolled]:bg-white transition-all"
       >
-        <div className="flex flex-row w-[60rem] mx-auto justify-between items-center">
-          <Link href={"/"}>
-            <Image
-              src={"/assets/foodpedia-logo.png"}
-              alt="foodpedia"
-              width={100}
-              height={100}
-            />
-          </Link>
-          <div className="flex flex-row items-center space-x-4">
-            <button
-              className="font-poppins px-6 py-1 text-white bg-orange-200 hover:bg-orange-400 hover:cursor-pointer rounded-xl"
-              form="recipe-form"
-            >
-              Publish
-            </button>
-            <AvatarMenu
-              name={currentUser.email}
-              onCornerMenuAction={onCornerMenuAction}
-            />
-          </div>
+        <Link href={"/"}>
+          <Image
+            src={"/assets/foodpedia-logo.png"}
+            alt="foodpedia"
+            width={100}
+            height={100}
+          />
+        </Link>
+        <div className="flex flex-row items-center space-x-4">
+          <button
+            className="font-poppins px-6 py-1 text-white bg-orange-200 hover:bg-orange-400 hover:cursor-pointer rounded-xl"
+            form="recipe-form"
+          >
+            Publish
+          </button>
+          <AvatarMenu
+            name={currentUser.email}
+            onCornerMenuAction={onCornerMenuAction}
+          />
         </div>
       </header>
-      <div className="grid grid-cols-2 w-2/3 mx-auto pt-6 pb-10 gap-4">
+      <main className="grid grid-cols-2 w-2/3 mx-auto pt-6 pb-10 gap-4">
         <div className="flex flex-col">
           <form id="recipe-form" onSubmit={onPublishContent}>
             <Input
@@ -157,10 +175,10 @@ export const NewRecipe = ({ currentUser, categories }) => {
               type="file"
               variant="bordered"
               className="mt-2"
+              accept="image/png, image/webp"
             />
             <div className="relative">
               <Input
-                label="Category"
                 placeholder="Food category"
                 variant="bordered"
                 className="mt-2"
@@ -230,9 +248,12 @@ export const NewRecipe = ({ currentUser, categories }) => {
                   return (
                     <div
                       key={idx + 1}
-                      className="flex flex-row w-full h-fit items-center justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
+                      className="flex flex-row w-full h-fit justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
                     >
-                      <div>{`${idx + 1}. ${e}`}</div>
+                      <div className="min-w-1 font-semibold">{`${
+                        idx + 1
+                      }.`}</div>
+                      <div className="grow">{e}</div>
                       <Button
                         isIconOnly
                         aria-label="Delete"
@@ -252,7 +273,15 @@ export const NewRecipe = ({ currentUser, categories }) => {
           </form>
         </div>
         <TipTap content={content} onChange={handleContentChange} />
-      </div>
+        {isDialogOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="flex bg-white p-6 rounded-lg shadow-lg w-60 gap-3 items-center">
+              <h2 className="text-xl font-semibold">Saving Recipe</h2>
+              <Spinner size="lg" />
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

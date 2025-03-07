@@ -1,13 +1,18 @@
 "use server";
 
 import { prisma } from "@/libs/postgres";
+import { uploadImage } from "@/libs/s3";
 import { getUserAction } from "@/shared/actions/get-user";
 import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
 export async function createRecipeActions(formData) {
+  const wait = new Promise((resolve) => setTimeout(resolve, 1000));
+  await wait;
+
   const title = formData.get("title");
   const content = formData.get("content");
+  const image = formData.get("image");
   const ingridients = formData.get("ingridients");
   const categories = formData.get("categories");
 
@@ -28,7 +33,11 @@ export async function createRecipeActions(formData) {
   }
 
   const sanitizeContent = DOMPurify.sanitize(content);
+
   const user = await getUserAction();
+  if (!user) {
+    return { error: "failet get user data" };
+  }
 
   const recipe = await tryCatch(
     prisma.recipe.create({
@@ -38,6 +47,7 @@ export async function createRecipeActions(formData) {
         ingridients: ingridients.split(","),
         description: sanitizeContent,
         userId: user.id,
+        image: image.size !== 0 ? image.name : null,
       },
     })
   );
@@ -46,6 +56,12 @@ export async function createRecipeActions(formData) {
     console.log(`create-recipe [ERROR]: ${recipe.error}`);
     return { error: "failed create recipe" };
   }
+
+  await uploadImage({
+    key: image.name,
+    folder: recipe.data.id,
+    body: image,
+  });
 
   return recipe.data;
 }
