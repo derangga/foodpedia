@@ -13,9 +13,18 @@
 - Clone this project
 - Install dependency
   ```sh
-  bun install
+  $ bun install
+  ```
+- Setup database
+  ```sh
+  $ bun run db-migrate
+  $ bun run db-seed
+  ```
+- Setup env by copy env.sample and make some adjustment
+  ```sh
+  $ cp env.sample .env
   ```
 - Run project
   ```sh
-  bun run dev
+  $ bun run dev
   ```
