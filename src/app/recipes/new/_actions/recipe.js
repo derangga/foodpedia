@@ -7,9 +7,6 @@ import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
 export async function createRecipeActions(formData) {
-  const wait = new Promise((resolve) => setTimeout(resolve, 1000));
-  await wait;
-
   const title = formData.get("title");
   const content = formData.get("content");
   const image = formData.get("image");
