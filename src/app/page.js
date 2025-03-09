@@ -5,19 +5,22 @@ import { CircleUserRound, Earth, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AppHeader } from "@/shared/components/app-header";
+import { getRecipes } from "../shared/actions/recipe";
 
-export default async function Home() {
+export default async function Page() {
   const authStatus = await authenticationStatus();
   const currentUser = await getUserBySessionAction(authStatus?.sessionId);
 
+  // TODO: replace with top 5 recipe favorite
+  const recipes = await getRecipes();
   return (
     <>
       <AppHeader authStatus={authStatus} avatarName={currentUser?.name || ""} />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
-          <div className="relative w-full rounded-xl h-[30rem] overflow-hidden">
+          <div className="relative w-full rounded-3xl h-[30rem] overflow-hidden">
             <Image
-              src={"/assets/backdrop-food.png"}
+              src={"/assets/backdrop-food.webp"}
               fill
               style={{ objectFit: "cover" }}
               alt="header-image"
@@ -122,11 +125,11 @@ export default async function Home() {
               Popular <span className="text-orange-400">Recipes</span>
             </div>
             <div className="grid xl:grid-cols-5 lg:grid-cols-4 gap-x-4 mt-6">
-              <RecipeCardLG />
-              <RecipeCardLG />
-              <RecipeCardLG />
-              <RecipeCardLG />
-              <RecipeCardLG />
+              {recipes.map((e, idx) => (
+                <Link key={idx + 1} href={`/recipes/${e.id}`}>
+                  <RecipeCardLG recipe={e} />
+                </Link>
+              ))}
             </div>
           </div>
         </section>

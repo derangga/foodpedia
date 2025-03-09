@@ -1,5 +1,5 @@
 import { getUserBySessionAction } from "@/shared/actions/get-user";
-import { getDetailRecipeAction } from "./_actions/recipe-detail";
+import { getDetailRecipeAction } from "../../../shared/actions/recipe";
 import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { AppHeader } from "@/shared/components/app-header";
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
@@ -9,7 +9,7 @@ import { Publisher } from "./_components/publisher";
 import { CommentItem } from "./_components/comment-item";
 import { CommentBox } from "./_components/comment-box";
 import { imgURL } from "@/utils/image-url";
-import { ImageHeader } from "./_components/image-header";
+import { ImageClient } from "./_components/image-client";
 
 export default async function Page({ params }) {
   const { id } = await params;
@@ -26,7 +26,7 @@ export default async function Page({ params }) {
       <main className="max-w-3xl m-auto p-8 gap-8">
         <section className="relative rounded-xl w-full h-96 overflow-hidden my-8">
           {/* Due to issue render on SSR use client side instead */}
-          <ImageHeader
+          <ImageClient
             src={imgSrc}
             alt={recipe.title}
             className="object-cover w-full h-full"
