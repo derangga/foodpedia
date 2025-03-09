@@ -6,11 +6,13 @@ import { FilePenLine, Search } from "lucide-react";
 import { AvatarMenu } from "./avatar-menu";
 import { useEffect, useRef } from "react";
 import { Input, Button } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { tryCatch } from "@/utils/try-catch";
 
-export const AppHeader = ({ isLogin, avatarName, onCornerMenuAction }) => {
+export const AppHeader = ({ authStatus, avatarName }) => {
   const ref = useRef(null);
   const router = useRouter();
+  const isLogin = authStatus.isAuthenticate;
   useEffect(() => {
     if (!ref.current) return;
     const header = ref.current;
@@ -28,6 +30,21 @@ export const AppHeader = ({ isLogin, avatarName, onCornerMenuAction }) => {
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
+
+  const onCornerMenuAction = async (key) => {
+    if (key === "sign-out") {
+      const result = await tryCatch(
+        fetch("/api/auth/logout", {
+          method: "POST",
+        })
+      );
+      if (result.error) return;
+
+      redirect("/");
+    } else {
+      router.push(`/${key}`);
+    }
+  };
 
   return (
     <header
