@@ -6,6 +6,6 @@ export default async function Page({ params }) {
   const { id } = await params;
   const recipe = await getDetailRecipeAction(Number(id));
   const currentUser = await getUserAction();
-  console.log(recipe);
+
   return <DetailPage currentUser={currentUser} recipe={recipe} />;
 }

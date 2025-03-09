@@ -42,9 +42,6 @@ export async function getUserAction() {
 
 export async function getUserByEmailAction(email) {
   const user = await prisma.user.findUnique({
-    omit: {
-      password: true,
-    },
     where: {
       email: email,
     },

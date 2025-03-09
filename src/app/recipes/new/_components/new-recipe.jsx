@@ -244,7 +244,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
                 </div>
               </div>
             ) : (
-              <div className="w-full grid grid-cols-2 gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
+              <div className="w-full flex flex-col gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
                 {ingridients.map((e, idx) => {
                   return (
                     <div

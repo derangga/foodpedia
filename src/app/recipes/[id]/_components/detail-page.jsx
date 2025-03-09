@@ -28,12 +28,16 @@ export const DetailPage = ({ currentUser, recipe }) => {
             src={imgURL}
             fill
             style={{ objectFit: "cover" }}
-            alt="content-1"
+            alt={recipe.title}
           />
         </section>
         <section className="w-full">
           <h1 className="font-poppins font-bold text-4xl">{recipe.title}</h1>
-          <Publisher className="mt-6" />
+          <Publisher
+            className="mt-6"
+            name={recipe.user.name}
+            createdAt={recipe.createdAt}
+          />
           <div className="flex flex-row border-y py-4 my-6 px-4 gap-4">
             <div className="flex gap-2 items-center hover:cursor-pointer">
               <Heart color="#6b7280" strokeWidth={1} size={22} />
