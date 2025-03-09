@@ -8,6 +8,7 @@ import DOMPurify from "isomorphic-dompurify";
 
 export async function createRecipeActions(formData) {
   const title = formData.get("title");
+  const story = formData.get("story");
   const content = formData.get("content");
   const image = formData.get("image");
   const ingridients = formData.get("ingridients");
@@ -19,6 +20,10 @@ export async function createRecipeActions(formData) {
 
   if (categories.length === 0) {
     return { error: "at least contains 1 category" };
+  }
+
+  if (!story) {
+    return { error: "story is empty" };
   }
 
   if (ingridients.length === 0) {
@@ -40,6 +45,7 @@ export async function createRecipeActions(formData) {
     prisma.recipe.create({
       data: {
         title,
+        story,
         categories: categories.split(","),
         ingridients: ingridients.split(","),
         description: sanitizeContent,

@@ -165,6 +165,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
             />
             <Textarea
               label="Story"
+              name="story"
               placeholder="Share a little more about this dish. What or who inspired you to cook it? What makes it special to you? What's your favourite way to eat it?"
               className="mt-2"
               variant="bordered"
