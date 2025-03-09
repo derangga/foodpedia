@@ -7,6 +7,9 @@ export async function getUserBySessionAction(sessionId) {
     where: { session: sessionId },
   });
   const user = await prisma.user.findUnique({
+    omit: {
+      password: true,
+    },
     where: {
       id: session.userId,
       deletedAt: null,
@@ -28,6 +31,9 @@ export async function getUserAction() {
     where: { session: sessionId },
   });
   const user = await prisma.user.findUnique({
+    omit: {
+      password: true,
+    },
     where: { id: session.userId },
   });
 

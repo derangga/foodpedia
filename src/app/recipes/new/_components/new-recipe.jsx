@@ -66,7 +66,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
     const formEvent = e.currentTarget;
     const form = new FormData(formEvent);
     const ingridient = form.get("ingridient")?.toString();
-    console.log(`add ingridient ${ingridient}`);
+
     if (!ingridient) return;
 
     setIngridients([...ingridients, ingridient]);
@@ -165,6 +165,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
             />
             <Textarea
               label="Story"
+              name="story"
               placeholder="Share a little more about this dish. What or who inspired you to cook it? What makes it special to you? What's your favourite way to eat it?"
               className="mt-2"
               variant="bordered"
@@ -243,7 +244,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
                 </div>
               </div>
             ) : (
-              <div className="w-full grid grid-cols-2 gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
+              <div className="w-full flex flex-col gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
                 {ingridients.map((e, idx) => {
                   return (
                     <div
