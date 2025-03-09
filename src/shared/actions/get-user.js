@@ -3,6 +3,8 @@ import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
 export async function getUserBySessionAction(sessionId) {
+  if (!sessionId) return null;
+
   const session = await prisma.session.findUnique({
     where: { session: sessionId },
   });

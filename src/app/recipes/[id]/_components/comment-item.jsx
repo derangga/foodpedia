@@ -1,3 +1,4 @@
+"use client";
 import { Ellipsis } from "lucide-react";
 import {
   Dropdown,
@@ -9,7 +10,7 @@ import {
 
 export const CommentItem = ({ className, onMenuClicked }) => {
   return (
-    <div className={`flex flex-col gap-4 border-y py-3 ${className || ""}`}>
+    <div className={`flex flex-col gap-4 border-b py-3 ${className || ""}`}>
       <div className="flex flex-row items-center gap-3">
         <div className="flex items-center justify-center h-8 w-8 bg-black rounded-full">
           <div className="text-white">D</div>
