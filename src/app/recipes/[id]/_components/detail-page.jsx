@@ -13,7 +13,6 @@ export const DetailPage = ({ currentUser, recipe }) => {
   const { favorite } = recipe._count;
   const sanitizeDescription = DOMPurify.sanitize(recipe.description);
   const imgURL = `${IMG_URL}/${recipe.id}/${recipe.image}`;
-  console.log(imgURL);
   const onCornerMenuAction = async (key) => {};
   return (
     <>

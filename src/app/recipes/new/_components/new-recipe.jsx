@@ -66,7 +66,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
     const formEvent = e.currentTarget;
     const form = new FormData(formEvent);
     const ingridient = form.get("ingridient")?.toString();
-    console.log(`add ingridient ${ingridient}`);
+
     if (!ingridient) return;
 
     setIngridients([...ingridients, ingridient]);
