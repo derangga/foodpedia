@@ -18,14 +18,14 @@ import { redirect } from "next/navigation";
 
 export const NewRecipe = ({ currentUser, categories }) => {
   const headerRef = useRef(null);
-  const [content, setContent] = useState("");
+  let stepToCook = useRef("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const [ingridients, setIngridients] = useState([]);
   const handleContentChange = (content) => {
-    setContent(content);
+    stepToCook = content;
   };
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
       return;
     }
 
-    formData.append("content", content);
+    formData.append("content", stepToCook);
     formData.append("ingridients", ingridients);
     formData.append("categories", selectedCategories);
 
@@ -273,7 +273,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
             )}
           </form>
         </div>
-        <TipTap content={content} onChange={handleContentChange} />
+        <TipTap content={stepToCook} onChange={handleContentChange} />
         {isDialogOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="flex bg-white p-6 rounded-lg shadow-lg w-60 gap-3 items-center">
