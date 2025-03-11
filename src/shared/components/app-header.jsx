@@ -71,9 +71,12 @@ export const AppHeader = ({ authStatus, avatarName }) => {
           >
             Recipes
           </Link>
-          <div className="px-4 py-1 rounded-lg hover:bg-slate-50 font-semibold font-mono hover:cursor-pointer">
+          <Link
+            href={"/aichef"}
+            className="px-4 py-1 rounded-lg hover:bg-slate-50 font-semibold font-mono hover:cursor-pointer"
+          >
             AI Chef
-          </div>
+          </Link>
         </div>
       </div>
       <div className="flex flex-row justify-end space-x-2">
