@@ -1,11 +1,18 @@
 "use server";
-import { promptSuggestionRecipe } from "@/libs/ai-client";
+import { promptDetailRecipe, promptSuggestionRecipe } from "@/libs/ai-client";
 
-export async function askAI(_, formData) {
+export async function askRecipeRecommendation(formData) {
   const prompt = formData.get("prompt");
 
-  if (!prompt) return;
+  if (!prompt) return null;
 
   const response = await promptSuggestionRecipe(prompt);
+  return response;
+}
+
+export async function askRecipedetail(recipeName) {
+  if (!recipeName) return null;
+
+  const response = await promptDetailRecipe(recipeName);
   return response;
 }

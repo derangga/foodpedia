@@ -1,4 +1,7 @@
-import { SUGGESTION_FOOD_PROMPT } from "@/utils/system-prompts";
+import {
+  SUGGESTION_FOOD_PROMPT,
+  FOOD_RECIPE_BASED_ON_NAME,
+} from "@/utils/system-prompts";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -24,9 +27,28 @@ export async function promptSuggestionRecipe(command) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const result = JSON.parse(finalOutput);
-    console.log(">>>>> RESULT PRMOPT <<<<<");
-    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(`prompt [ERROR]: ${error}`);
+    return null;
+  }
+}
 
+export async function promptDetailRecipe(command) {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "google/gemini-2.0-flash-exp:free",
+      messages: [
+        { role: "system", content: FOOD_RECIPE_BASED_ON_NAME },
+        {
+          role: "user",
+          content: `Can you provide a detail recipe of ${command}`,
+        },
+      ],
+    });
+
+    const finalOutput = removeBackticks(completion.choices[0].message.content);
+    const result = JSON.parse(finalOutput);
     return result;
   } catch (error) {
     console.log(`prompt [ERROR]: ${error}`);
