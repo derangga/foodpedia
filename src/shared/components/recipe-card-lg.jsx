@@ -5,8 +5,8 @@ import { ChefHat } from "lucide-react";
 export const RecipeCardLG = ({ recipe }) => {
   const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
   return (
-    <div className="bg-slate-100 rounded-2xl h-[28rem] p-3 flex flex-col hover:cursor-pointer">
-      <div className="font-poppins font-semibold text-2xl h-24 line-clamp-3">
+    <div className="bg-slate-100 rounded-2xl h-[26rem] p-3 flex flex-col hover:cursor-pointer">
+      <div className="font-poppins font-semibold text-xl h-[90px] line-clamp-3">
         {recipe.title}
       </div>
       <div className="relative rounded-xl w-full h-56 overflow-hidden">
