@@ -11,7 +11,7 @@ export async function createRecipeActions(formData) {
   const story = formData.get("story");
   const content = formData.get("content");
   const image = formData.get("image");
-  const ingridients = formData.get("ingridients");
+  const ingredients = formData.get("ingredients");
   const categories = formData.get("categories");
 
   if (!title) {
@@ -26,8 +26,8 @@ export async function createRecipeActions(formData) {
     return { error: "story is empty" };
   }
 
-  if (ingridients.length === 0) {
-    return { error: "at least contains 1 ingridients" };
+  if (ingredients.length === 0) {
+    return { error: "at least contains 1 ingredients" };
   }
 
   if (!content) {
@@ -47,7 +47,7 @@ export async function createRecipeActions(formData) {
         title,
         story,
         categories: categories.split(","),
-        ingridients: ingridients.split(","),
+        ingredients: ingredients.split(","),
         description: sanitizeContent,
         userId: user.id,
         image: image.size !== 0 ? image.name : null,

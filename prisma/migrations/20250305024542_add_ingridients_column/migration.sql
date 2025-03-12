@@ -14,7 +14,7 @@ ALTER TABLE "recipe" DROP CONSTRAINT "recipe_categoryId_fkey";
 ALTER TABLE "recipe" DROP COLUMN "categoryId",
 DROP COLUMN "tags",
 ADD COLUMN     "categories" TEXT[],
-ADD COLUMN     "ingridients" TEXT[];
+ADD COLUMN     "ingredients" TEXT[];
 
 -- DropTable
 DROP TABLE "tag";

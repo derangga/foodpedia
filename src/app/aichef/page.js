@@ -131,7 +131,7 @@ export default function Page() {
         >
           <Textarea
             name="prompt"
-            placeholder="ask a recipe based on ingridients"
+            placeholder="ask a recipe based on ingredients"
             variant="underlined"
             minRows={2}
             color="warning"
