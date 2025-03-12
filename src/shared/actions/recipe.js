@@ -1,4 +1,6 @@
 import { prisma } from "@/libs/postgres";
+import { getUserAction } from "./get-user";
+import { tryCatch } from "@/utils/try-catch";
 
 export async function getRecipes() {
   const recipes = prisma.recipe.findMany();
@@ -26,4 +28,22 @@ export async function getDetailRecipeAction(recipeId) {
   });
 
   return recipe;
+}
+
+export async function getRecipeByUserIdAction() {
+  const user = await getUserAction();
+  const recipes = await tryCatch(
+    prisma.recipe.findMany({
+      where: {
+        userId: user.id,
+      },
+    })
+  );
+
+  if (recipes.error) {
+    console.log(`get-recipe-by-uid [ERROR]: ${recipes.error}`);
+    return [];
+  }
+
+  return recipes.data;
 }
