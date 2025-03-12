@@ -27,6 +27,7 @@ export async function promptSuggestionRecipe(command) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const result = JSON.parse(finalOutput);
+    console.log(result);
     return result;
   } catch (error) {
     console.log(`prompt [ERROR]: ${error}`);

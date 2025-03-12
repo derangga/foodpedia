@@ -29,6 +29,7 @@
     "bcrypt": "^5.1.1",
     "framer-motion": "^12.4.7",
     "isomorphic-dompurify": "^2.22.0",
+    "jotai": "^2.12.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.476.0",
     "moment": "^2.30.1",

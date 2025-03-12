@@ -1,8 +1,12 @@
 import { Button } from "@heroui/react";
-import { BotMessageSquare, Ellipsis, House, Search } from "lucide-react";
+import { BotMessageSquare, House, Search } from "lucide-react";
 import Link from "next/link";
+import { SessionGpt } from "../_components/session-gpt";
+import { getGptSessionByUserId } from "./_actions/ask-ai";
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
+  const sessions = await getGptSessionByUserId();
+
   return (
     <div className="flex flex-row w-screen h-screen">
       <aside className="w-72 h-screen bg-stone-100 flex flex-col pb-4 px-3 overflow-scroll">
@@ -20,10 +24,7 @@ export default function Layout({ children }) {
             <BotMessageSquare />
           </Button>
         </div>
-        <div className="flex flex-row justify-between p-2 rounded-xl hover:bg-stone-200 hover:cursor-pointer font-poppins">
-          <div>Tempe dan telur</div>
-          <Ellipsis />
-        </div>
+        <SessionGpt sessions={sessions} />
       </aside>
       <div className="w-full">{children}</div>
     </div>

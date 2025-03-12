@@ -1,5 +1,18 @@
 "use server";
 import { promptDetailRecipe, promptSuggestionRecipe } from "@/libs/ai-client";
+import { prisma } from "@/libs/postgres";
+import { getUserAction } from "@/shared/actions/get-user";
+
+export async function getGptSessionByUserId() {
+  const user = await getUserAction();
+  const gptSession = await prisma.gptSession.findFirst({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  return gptSession;
+}
 
 export async function askRecipeRecommendation(formData) {
   const prompt = formData.get("prompt");

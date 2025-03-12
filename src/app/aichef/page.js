@@ -130,6 +130,7 @@ export default function Page() {
           onSubmit={onSubmit}
         >
           <Textarea
+            isDisabled={chats.length > 1}
             name="prompt"
             placeholder="ask a recipe based on ingredients"
             variant="underlined"

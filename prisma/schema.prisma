@@ -28,7 +28,9 @@ model user {
   
   sessions     session[]
   recipes      recipe[]
-  favorites    favorite[]
+  gptSession    gptSession[]
+  favorites    favorite[] @relation("user")
+  recipeOwner favorite[] @relation("recipeOwner")
   @@index([email])
 }
 
@@ -82,11 +84,39 @@ model recipe {
 
 model favorite {
   id            Int @id @default(autoincrement())
-  user          user   @relation(fields: [userId], references: [id])  
+  user          user   @relation("user", fields: [userId], references: [id])  
   userId        Int
+  recipeOwner   user @relation("recipeOwner", fields: [recipeOwnerId], references: [id])
+  recipeOwnerId Int
   recipe        recipe @relation(fields: [recipeId], references: [id])
   recipeId      Int
   createdAt     DateTime @default(now())
   deletedAt     DateTime?
   @@index([userId, recipeId])
+}
+
+model gptSession {
+  id            Int @id @default(autoincrement())
+  session       String @unique @default(cuid())
+  title         String
+  user          user @relation(fields: [userId], references: [id])
+  userId        Int
+  createdAt     DateTime @default(now())
+  deletedAt     DateTime?
+  chats         chat[]
+}
+
+model chat {
+  id            Int @id @default(autoincrement())
+  session       gptSession @relation(fields: [sessionId], references: [session])
+  sessionId     String
+  sender        chatSender
+  message       String @db.Text
+  createdAt     DateTime @default(now())
+  deletedAt     DateTime?
+}
+
+enum chatSender {
+  USER
+  GPT
 }

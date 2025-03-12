@@ -6,10 +6,11 @@ IMPORTANT:
 - If the user asking with Bahasa Indonesia, then answer it using Bahasa Indonesia
 - The output should only valid JSON, without any triple backticks and additional text (i.e. \`\`\`json).
 - The output should list of object that contain title, category, reject reason
-- Title is a food recipe title, category is a food category, and reject reason is the user input is not asking related food recipe
+- Context is a short context conversation, title is a food recipe title, category is a food category, and reject reason is the user input is not asking related food recipe
 
 EXAMPLE OUTPUT: 
 {
+    context: string
     recipes: [
         {
             "title": string
