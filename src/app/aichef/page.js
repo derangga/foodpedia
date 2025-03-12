@@ -120,7 +120,7 @@ export default function Page() {
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="h-14 w-full flex flex-row sticky top-0 z-50 justify-between items-center px-8 bg-white shadow-sm">
+      <header className="h-16 w-full flex flex-row sticky top-0 z-50 justify-between items-center px-8 bg-white shadow-sm">
         <Link href={"/"}>
           <Image
             src={"/assets/foodpedia-logo.png"}
