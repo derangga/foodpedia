@@ -5,6 +5,8 @@ import { askRecipedetail, askRecipeRecommendation } from "./_actions/ask-ai";
 import { SuggestRecipeItem } from "./_components/suggest-recipe-item";
 import { ArrowUp } from "lucide-react";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -117,11 +119,19 @@ export default function Page() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <header className="h-20 w-full flex flex-row justify-end items-center px-6 bg-white">
+    <div className="h-screen flex flex-col">
+      <header className="h-14 w-full flex flex-row sticky top-0 z-50 justify-between items-center px-8 bg-white shadow-sm">
+        <Link href={"/"}>
+          <Image
+            src={"/assets/foodpedia-logo.png"}
+            alt="foodpedia"
+            width={100}
+            height={100}
+          />
+        </Link>
         <AvatarMenu name="Ace" />
       </header>
-      <main className="grow py-8 px-3 flex flex-col w-2/3 mx-auto gap-10 overflow-scroll scrollbar-hide">
+      <main className="grow py-8 px-3 flex flex-col w-1/2 mx-auto gap-10 overflow-scroll scrollbar-hide">
         <div className="grow flex flex-col justify-end gap-3 px-4">
           {chats.map((e, idx) => chatBubble(e, idx + 1))}
         </div>
