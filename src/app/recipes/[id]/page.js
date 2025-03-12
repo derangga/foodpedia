@@ -75,7 +75,7 @@ export default async function Page({ params }) {
             </CardHeader>
             <CardBody className="p-0 mt-4">
               <ul className="list-disc list-inside space-y-2">
-                {recipe.ingridients.map((e, idx) => (
+                {recipe.ingredients.map((e, idx) => (
                   <li key={idx + 1}>{e}</li>
                 ))}
               </ul>

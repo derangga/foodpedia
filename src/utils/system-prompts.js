@@ -1,5 +1,5 @@
 export const SUGGESTION_FOOD_PROMPT = `
-You are a professional chef, you will help us to provide a suggestion food recipe name based on the ingridients
+You are a professional chef, you will help us to provide a suggestion food recipe name based on the ingredients
 
 IMPORTANT:
 - If the user asking with english, then answer it using an english

@@ -23,7 +23,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const [ingridients, setIngridients] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const handleContentChange = (content) => {
     stepToCook = content;
   };
@@ -60,22 +60,22 @@ export const NewRecipe = ({ currentUser, categories }) => {
 
   const onCornerMenuAction = (key) => {};
 
-  const onAddIngridients = (e) => {
+  const onAddIngredients = (e) => {
     e.preventDefault();
 
     const formEvent = e.currentTarget;
     const form = new FormData(formEvent);
-    const ingridient = form.get("ingridient")?.toString();
+    const ingredient = form.get("ingredient")?.toString();
 
-    if (!ingridient) return;
+    if (!ingredient) return;
 
-    setIngridients([...ingridients, ingridient]);
+    setIngredients([...ingredients, ingredient]);
     formEvent.reset();
   };
 
-  const onDeleteIngridient = (name) => {
-    const temp = ingridients.filter((e) => e !== name);
-    setIngridients(temp);
+  const onDeleteIngredient = (name) => {
+    const temp = ingredients.filter((e) => e !== name);
+    setIngredients(temp);
   };
 
   const onClickCategory = (name) => {
@@ -108,7 +108,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
     }
 
     formData.append("content", stepToCook);
-    formData.append("ingridients", ingridients);
+    formData.append("ingredients", ingredients);
     formData.append("categories", selectedCategories);
 
     const recipe = await createRecipeActions(formData);
@@ -226,26 +226,26 @@ export const NewRecipe = ({ currentUser, categories }) => {
               )}
             </div>
           </form>
-          <form className="flex flex-col space-y-2" onSubmit={onAddIngridients}>
+          <form className="flex flex-col space-y-2" onSubmit={onAddIngredients}>
             <div className="flex flex-row items-center space-x-2 mt-2">
               <Input
-                name="ingridient"
-                placeholder="Your recipe ingridients"
+                name="ingredient"
+                placeholder="Your recipe ingredients"
                 variant="bordered"
               />
               <Button color="warning" className="text-white" type="submit">
                 Add
               </Button>
             </div>
-            {ingridients.length === 0 ? (
+            {ingredients.length === 0 ? (
               <div className="border-2 border-dashed border-gray-300 rounded-xl h-24 w-full flex p-2 justify-center items-center">
                 <div className="font-poppins text-gray-500">
-                  Empty Ingridients
+                  Empty Ingredients
                 </div>
               </div>
             ) : (
               <div className="w-full flex flex-col gap-2 border-2 border-gray-300 rounded-xl p-2 min-h-24">
-                {ingridients.map((e, idx) => {
+                {ingredients.map((e, idx) => {
                   return (
                     <div
                       key={idx + 1}
@@ -261,7 +261,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
                         size="sm"
                         color="danger"
                         onPress={() => {
-                          onDeleteIngridient(e);
+                          onDeleteIngredient(e);
                         }}
                       >
                         <Trash2 size={16} />
