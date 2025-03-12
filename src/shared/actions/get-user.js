@@ -8,6 +8,9 @@ export async function getUserBySessionAction(sessionId) {
   const session = await prisma.session.findUnique({
     where: { session: sessionId },
   });
+
+  if (!session) return null;
+
   const user = await prisma.user.findUnique({
     omit: {
       password: true,
