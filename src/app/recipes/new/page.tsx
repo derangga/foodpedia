@@ -11,6 +11,9 @@ export default async function Page() {
   }
 
   const user = await getUserBySessionAction(authStatus?.sessionId);
+  if (!user) {
+    redirect("/");
+  }
   const categories = await getCategoriesAction();
 
   return <NewRecipe currentUser={user} categories={categories} />;

@@ -27,7 +27,7 @@ export async function getUserBySessionAction(sessionId: string | undefined) {
 export async function getUserAction() {
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
-    console.log(`get-user [ERROR]: ${nextCookie.error}`);
+    console.error(`get-user [ERROR]: ${nextCookie.error}`);
     return null;
   }
 

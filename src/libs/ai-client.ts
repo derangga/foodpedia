@@ -31,7 +31,7 @@ export async function promptSuggestionRecipe(command: string) {
     const result = JSON.parse(finalOutput);
     return result as GptRecipeSuggestions;
   } catch (error) {
-    console.log(`prompt [ERROR]: ${error}`);
+    console.error(`prompt [ERROR]: ${error}`);
     return null;
   }
 }
@@ -62,7 +62,7 @@ export async function promptDetailRecipe(command: string) {
     const serializer = result as GptRecipeGuide;
     return serializer;
   } catch (error) {
-    console.log(`prompt [ERROR]: ${error}`);
+    console.error(`prompt [ERROR]: ${error}`);
     return null;
   }
 }

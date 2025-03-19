@@ -6,7 +6,12 @@ import { getUserAction } from "@/shared/actions/get-user";
 import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
-export async function createRecipeActions(formData: FormData) {
+type CreateRecipe = {
+  error: string | null;
+};
+export async function createRecipeActions(
+  formData: FormData
+): Promise<CreateRecipe> {
   const title = formData.get("title") as string;
   const story = formData.get("story") as string;
   const content = formData.get("content") as string;
@@ -56,7 +61,7 @@ export async function createRecipeActions(formData: FormData) {
   );
 
   if (recipe.error) {
-    console.log(`create-recipe [ERROR]: ${recipe.error}`);
+    console.error(`create-recipe [ERROR]: ${recipe.error}`);
     return { error: "failed create recipe" };
   }
 
@@ -66,5 +71,5 @@ export async function createRecipeActions(formData: FormData) {
     body: image,
   });
 
-  return recipe.data;
+  return { error: null };
 }

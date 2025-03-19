@@ -51,33 +51,33 @@ export default async function Page() {
                     <CircleUserRound />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
                 <div className="xl:w-72 lg:w-44 flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Earth />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
                 <div className="xl:w-72 lg:w-44 flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Heart />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>

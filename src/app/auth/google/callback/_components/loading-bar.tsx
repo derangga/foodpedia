@@ -20,7 +20,7 @@ export const LoadingBar = ({ token }: { token: string }) => {
         const route = response.ok ? "/" : "/auth";
         redirect(route);
       } catch (error) {
-        console.log("[ERROR] failed generate session");
+        console.error("[ERROR] failed generate session");
         redirect("/auth");
       }
     };

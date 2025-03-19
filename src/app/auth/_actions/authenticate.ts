@@ -35,7 +35,7 @@ export async function loginAction(_: any, formData: FormData) {
 export async function loginGoogleAction(_: any, formData: FormData) {
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
-    console.log(`login-google-action: ${nextCookie.error}`);
+    console.error(`login-google-action: ${nextCookie.error}`);
     return;
   }
 
@@ -81,7 +81,7 @@ export async function registerAction(formData: FormData) {
   );
 
   if (error || !data) {
-    console.log(`register-action [ERROR]: ${error}`);
+    console.error(`register-action [ERROR]: ${error}`);
     return response(false, "failed register user");
   }
 

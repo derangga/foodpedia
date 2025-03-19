@@ -8,7 +8,7 @@ export async function authenticationStatus(): Promise<AuthStatus> {
   const nextCookie = await tryCatch(cookies());
 
   if (nextCookie.error) {
-    console.log(`validateAuthAction [ERROR]: ${nextCookie.error}`);
+    console.error(`validateAuthAction [ERROR]: ${nextCookie.error}`);
   }
   const cookie = nextCookie.data;
 

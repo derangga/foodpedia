@@ -2,7 +2,6 @@
 import { Button, Textarea } from "@heroui/react";
 import { FormEvent, Key, useState } from "react";
 import { askRecipedetail, askRecipeRecommendation } from "../_actions/ask-ai";
-import { SuggestRecipeItem } from "./suggest-recipe-item";
 import { ArrowUp } from "lucide-react";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
 import Link from "next/link";

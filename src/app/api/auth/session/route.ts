@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     return responseBuilder();
   } catch (error) {
-    console.log(`[ERROR] ${error}`);
+    console.error(`[ERROR] ${error}`);
     return responseBuilder(
       { errors: [{ message: "failed request session" }] },
       422
