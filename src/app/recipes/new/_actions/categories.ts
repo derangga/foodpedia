@@ -5,7 +5,7 @@ export async function getCategoriesAction() {
   const result = await tryCatch(prisma.category.findMany());
 
   if (result.error) {
-    console.log(`get-categories [ERROR]: ${categories.error}`);
+    console.log(`get-categories [ERROR]: ${result.error}`);
     return [];
   }
 

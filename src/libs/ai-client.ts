@@ -1,3 +1,4 @@
+import { GptRecipeGuide, GptRecipeSuggestions } from "@/model/gpt";
 import {
   SUGGESTION_FOOD_PROMPT,
   FOOD_RECIPE_BASED_ON_NAME,
@@ -28,7 +29,7 @@ export async function promptSuggestionRecipe(command: string) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const result = JSON.parse(finalOutput);
-    return result;
+    return result as GptRecipeSuggestions;
   } catch (error) {
     console.log(`prompt [ERROR]: ${error}`);
     return null;
@@ -50,7 +51,7 @@ export async function promptDetailRecipe(command: string) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const result = JSON.parse(finalOutput);
-    return result;
+    return result as GptRecipeGuide;
   } catch (error) {
     console.log(`prompt [ERROR]: ${error}`);
     return null;

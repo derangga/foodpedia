@@ -18,7 +18,8 @@ export async function POST() {
   const session = await prisma.session.findUnique({
     where: { session: sessionCookie.value },
   });
-  if (session.deletedAt) {
+
+  if (!session || session.deletedAt) {
     nextCookie.data.delete("session_id");
     return responseBuilder();
   }

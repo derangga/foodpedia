@@ -3,7 +3,7 @@ import { Progress } from "@heroui/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
-export const LoadingBar = ({ token }) => {
+export const LoadingBar = ({ token }: { token: string }) => {
   useEffect(() => {
     if (!token) return;
 

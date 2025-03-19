@@ -9,11 +9,11 @@ import Link from "next/link";
 export default async function Page() {
   const authStatus = await authenticationStatus();
   const currentUser = await getUserBySessionAction(authStatus?.sessionId);
-  const recipes = await getRecipeByUserIdAction();
+  const recipes = (await getRecipeByUserIdAction()) || [];
 
   return (
     <div>
-      <AppHeader authStatus={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
       <main className="w-2/3 mx-auto py-20 flex flex-col">
         <div className="flex flex-row gap-16 items-center">
           <div className="flex justify-center items-center size-24 bg-black rounded-full text-white font-poppins text-3xl font-bold">
@@ -38,7 +38,7 @@ export default async function Page() {
         <div className="grid grid-cols-4 gap-4 mt-6">
           {recipes.map((e, idx) => (
             <Link key={idx + 1} href={`/recipes/${e.id}`}>
-              <RecipeCardLG recipe={e} />
+              <RecipeCardLG {...e} />
             </Link>
           ))}
         </div>

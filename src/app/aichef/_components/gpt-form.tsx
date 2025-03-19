@@ -1,6 +1,6 @@
 "use client";
 import { Button, Textarea } from "@heroui/react";
-import { useState } from "react";
+import { FormEvent, Key, useState } from "react";
 import { askRecipedetail, askRecipeRecommendation } from "../_actions/ask-ai";
 import { SuggestRecipeItem } from "./suggest-recipe-item";
 import { ArrowUp } from "lucide-react";
@@ -9,20 +9,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { tryCatch } from "@/utils/try-catch";
 import { redirect, useRouter } from "next/navigation";
+import { User } from "@/model/user";
+import { GptRecipeGuide, GptRecipeSuggestions } from "@/model/gpt";
 
-export const GptForm = ({ currenetUser }) => {
+type ChatModel = {
+  sender: string;
+  type?: string;
+  message: string | GptRecipeSuggestions | GptRecipeGuide | null;
+};
+
+export const GptForm = ({ currenetUser }: { currenetUser: User }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<Array<ChatModel>>([]);
   const router = useRouter();
 
-  const onSubmit = async (e) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
     let tempChat = chats;
     tempChat.push({
       sender: "user",
-      message: formData.get("prompt").toString(),
+      message: formData.get("prompt") as string,
     });
     setChats(tempChat);
 
@@ -31,7 +39,7 @@ export const GptForm = ({ currenetUser }) => {
     setIsLoading(true);
     const result = await askRecipeRecommendation(formData);
 
-    const respondType = result.reject_reason ? "rejection" : "suggestion";
+    const respondType = result?.reject_reason ? "rejection" : "suggestion";
     tempChat.push({
       sender: "gpt",
       type: respondType,
@@ -42,7 +50,7 @@ export const GptForm = ({ currenetUser }) => {
     setIsLoading(false);
   };
 
-  const askRecipe = async (recipeName) => {
+  const askRecipe = async (recipeName: string) => {
     let tempChat = chats;
     tempChat.push({
       sender: "user",
@@ -61,7 +69,7 @@ export const GptForm = ({ currenetUser }) => {
     setIsLoading(false);
   };
 
-  const onCornerMenuAction = async (key) => {
+  const onCornerMenuAction = async (key: Key) => {
     if (key === "sign-out") {
       const result = await tryCatch(
         fetch("/api/auth/logout", {
@@ -76,20 +84,22 @@ export const GptForm = ({ currenetUser }) => {
     }
   };
 
-  const chatBubble = (chat, key) => {
+  const chatBubble = (chat: ChatModel, key: number) => {
     if (chat.sender === "user") {
       return (
         <div
           key={key}
           className="py-2 px-4 bg-gray-100 rounded-xl w-fit self-end"
         >
-          {chat.message}
+          {chat.message as string}
         </div>
       );
     } else {
-      const { message } = chat;
+      const message = chat.message;
       if (chat.type === "recipe") {
-        const recipe = message.recipe;
+        const gptRecipeGuide = message as GptRecipeGuide;
+        const recipe = gptRecipeGuide.recipe;
+        console.log(recipe);
         const categories = recipe.categories.join(", ");
         return (
           <div key={key} className="flex flex-col gap-2">
@@ -113,9 +123,10 @@ export const GptForm = ({ currenetUser }) => {
           </div>
         );
       } else if (chat.type === "suggestion") {
+        const gptRecipeSuggestions = message as GptRecipeSuggestions;
         return (
           <div key={key} className="flex flex-col gap-2 w-[36rem]">
-            {message.recipes.map((e, idx) => (
+            {gptRecipeSuggestions.recipes.map((e, idx) => (
               <SuggestRecipeItem
                 key={idx + 1}
                 recipe={e}
@@ -125,9 +136,10 @@ export const GptForm = ({ currenetUser }) => {
           </div>
         );
       } else if (chat.type === "rejection") {
+        const gpt = message as GptRecipeSuggestions | GptRecipeGuide;
         return (
           <div key={key} className="py-2 px-4">
-            {message.reject_reason}
+            {gpt.reject_reason}
           </div>
         );
       }

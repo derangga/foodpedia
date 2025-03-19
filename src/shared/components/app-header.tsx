@@ -4,15 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { FilePenLine, Search } from "lucide-react";
 import { AvatarMenu } from "./avatar-menu";
-import { useEffect, useRef } from "react";
+import { Key, useEffect, useRef } from "react";
 import { Input, Button } from "@heroui/react";
 import { redirect, useRouter } from "next/navigation";
 import { tryCatch } from "@/utils/try-catch";
+import { AuthStatus } from "@/model/auth-status";
 
-export const AppHeader = ({ authStatus, avatarName }) => {
-  const ref = useRef(null);
+export type AppHeaderProps = {
+  auth: AuthStatus;
+  avatarName: string;
+};
+export const AppHeader = (props: AppHeaderProps) => {
+  const ref = useRef<HTMLElement | null>(null);
   const router = useRouter();
-  const isLogin = authStatus.isAuthenticate;
+  const isLogin = props.auth.isAuthenticate;
+  const name = props.avatarName;
   useEffect(() => {
     if (!ref.current) return;
     const header = ref.current;
@@ -31,7 +37,7 @@ export const AppHeader = ({ authStatus, avatarName }) => {
     };
   }, []);
 
-  const onCornerMenuAction = async (key) => {
+  const onCornerMenuAction = async (key: Key) => {
     if (key === "sign-out") {
       const result = await tryCatch(
         fetch("/api/auth/logout", {
@@ -89,7 +95,6 @@ export const AppHeader = ({ authStatus, avatarName }) => {
               <Search color="#9E9E9E" />
             </div>
           }
-          classNames={"w-44"}
         />
         {isLogin && (
           <Link
@@ -101,10 +106,7 @@ export const AppHeader = ({ authStatus, avatarName }) => {
           </Link>
         )}
         {isLogin ? (
-          <AvatarMenu
-            name={avatarName}
-            onCornerMenuAction={onCornerMenuAction}
-          />
+          <AvatarMenu name={name} onCornerMenuAction={onCornerMenuAction} />
         ) : (
           <div className="space-x-2">
             <Button

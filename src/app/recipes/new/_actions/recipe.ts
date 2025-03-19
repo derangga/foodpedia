@@ -6,13 +6,13 @@ import { getUserAction } from "@/shared/actions/get-user";
 import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
-export async function createRecipeActions(formData) {
-  const title = formData.get("title");
-  const story = formData.get("story");
-  const content = formData.get("content");
-  const image = formData.get("image");
-  const ingredients = formData.get("ingredients");
-  const categories = formData.get("categories");
+export async function createRecipeActions(formData: FormData) {
+  const title = formData.get("title") as string;
+  const story = formData.get("story") as string;
+  const content = formData.get("content") as string;
+  const image = formData.get("image") as File;
+  const ingredients = formData.get("ingredients") as string;
+  const categories = formData.get("categories") as string;
 
   if (!title) {
     return { error: "title is empty" };
@@ -62,7 +62,7 @@ export async function createRecipeActions(formData) {
 
   await uploadImage({
     key: image.name,
-    folder: recipe.data.id,
+    folder: `${recipe.data.id}`,
     body: image,
   });
 

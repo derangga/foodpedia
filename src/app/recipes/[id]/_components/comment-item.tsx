@@ -8,9 +8,15 @@ import {
   Button,
 } from "@heroui/react";
 
-export const CommentItem = ({ className, onMenuClicked }) => {
+export type CommentProps = {
+  onMenuClicked?: () => void;
+  className?: string;
+};
+export const CommentItem = (props: CommentProps) => {
   return (
-    <div className={`flex flex-col gap-4 border-b py-3 ${className || ""}`}>
+    <div
+      className={`flex flex-col gap-4 border-b py-3 ${props.className || ""}`}
+    >
       <div className="flex flex-row items-center gap-3">
         <div className="flex items-center justify-center h-8 w-8 bg-black rounded-full">
           <div className="text-white">D</div>
@@ -29,7 +35,7 @@ export const CommentItem = ({ className, onMenuClicked }) => {
           <DropdownMenu
             aria-label="Static Actions"
             variant="flat"
-            onAction={(key) => onMenuClicked(key)}
+            onAction={(key) => props.onMenuClicked?.()}
           >
             <DropdownItem key="delete" className="text-danger" color="danger">
               Delete comment

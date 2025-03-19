@@ -9,11 +9,11 @@ import * as arctic from "arctic";
 import { googleClient } from "@/libs/google/google-client";
 import { redirect } from "next/navigation";
 
-export async function loginAction(_, formData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
+export async function loginAction(_: any, formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
-  const response = (success, message) => {
+  const response = (success: boolean, message: string) => {
     return { success, message };
   };
   const user = await getUserByEmailAction(email);
@@ -22,7 +22,7 @@ export async function loginAction(_, formData) {
     return response(false, "invalid credential");
   }
 
-  const isValid = await bcrypt.compare(password, user.password);
+  const isValid = await bcrypt.compare(password, user.password || "");
   if (!isValid) {
     return response(false, "invalid credential");
   }
@@ -32,7 +32,7 @@ export async function loginAction(_, formData) {
   return response(true, "");
 }
 
-export async function loginGoogleAction(_, formData) {
+export async function loginGoogleAction(_: any, formData: FormData) {
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
     console.log(`login-google-action: ${nextCookie.error}`);
@@ -54,19 +54,20 @@ export async function loginGoogleAction(_, formData) {
   redirect(`${url.href}`);
 }
 
-export async function registerAction(formData) {
-  const name = formData.get("name")?.toString();
-  const password = formData.get("password")?.toString();
-  const email = formData.get("email")?.toString();
+export async function registerAction(formData: FormData) {
+  const name = formData.get("name") as string;
+  const password = formData.get("password") as string;
+  const email = formData.get("email") as string;
 
-  const response = (success, message) => {
+  const response = (success: boolean, message: string) => {
     return {
       success,
       message,
     };
   };
 
-  const hashPw = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT));
+  const salt = process.env.BCRYPT_SALT || "";
+  const hashPw = await bcrypt.hash(password, Number(salt));
 
   const { data, error } = await tryCatch(
     prisma.user.create({
