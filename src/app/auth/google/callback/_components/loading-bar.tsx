@@ -3,7 +3,7 @@ import { Progress } from "@heroui/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
-export const LoadingBar = ({ token }) => {
+export const LoadingBar = ({ token }: { token: string }) => {
   useEffect(() => {
     if (!token) return;
 
@@ -20,7 +20,7 @@ export const LoadingBar = ({ token }) => {
         const route = response.ok ? "/" : "/auth";
         redirect(route);
       } catch (error) {
-        console.log("[ERROR] failed generate session");
+        console.error("[ERROR] failed generate session");
         redirect("/auth");
       }
     };

@@ -6,9 +6,15 @@ import {
   DropdownItem,
 } from "@heroui/react";
 import { SquareUserRound, Settings, LogOut } from "lucide-react";
-export const AvatarMenu = ({ name, onCornerMenuAction }) => {
+import { Key } from "react";
+
+export type AvatarMenyProps = {
+  name: string;
+  onCornerMenuAction?: (key: Key) => void;
+};
+export const AvatarMenu = (props: AvatarMenyProps) => {
   const avatar = () => {
-    return name.charAt(0).toUpperCase();
+    return props.name.charAt(0).toUpperCase();
   };
   return (
     <Dropdown>
@@ -19,7 +25,7 @@ export const AvatarMenu = ({ name, onCornerMenuAction }) => {
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Static Actions"
-        onAction={(key) => onCornerMenuAction(key)}
+        onAction={(key) => props.onCornerMenuAction?.(key)}
       >
         <DropdownItem key="profile">
           <div className="flex flex-row space-x-4 items-center">

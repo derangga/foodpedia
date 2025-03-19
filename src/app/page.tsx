@@ -8,14 +8,14 @@ import { AppHeader } from "@/shared/components/app-header";
 import { getRecipes } from "../shared/actions/recipe";
 
 export default async function Page() {
-  const authStatus = await authenticationStatus();
-  const currentUser = await getUserBySessionAction(authStatus.sessionId || "");
+  const auth = await authenticationStatus();
+  const currentUser = await getUserBySessionAction(auth.sessionId);
 
   // TODO: replace with top 5 recipe favorite
   const recipes = await getRecipes();
   return (
     <>
-      <AppHeader authStatus={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={auth} avatarName={currentUser?.name || ""} />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
           <div className="relative w-full rounded-3xl h-[30rem] overflow-hidden">
@@ -51,33 +51,33 @@ export default async function Page() {
                     <CircleUserRound />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
                 <div className="xl:w-72 lg:w-44 flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Earth />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
                 <div className="xl:w-72 lg:w-44 flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Heart />
                   </div>
                   <div className="font-bold mt-4">Fun Comunity</div>
-                  <p className="mt-1 line-clamp-3">
+                  <div className="mt-1 line-clamp-3">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua.
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default async function Page() {
             <div className="grid xl:grid-cols-5 lg:grid-cols-4 gap-x-4 mt-6">
               {recipes.map((e, idx) => (
                 <Link key={idx + 1} href={`/recipes/${e.id}`}>
-                  <RecipeCardLG recipe={e} />
+                  <RecipeCardLG {...e} />
                 </Link>
               ))}
             </div>

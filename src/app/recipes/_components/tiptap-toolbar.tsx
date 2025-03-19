@@ -9,7 +9,9 @@ import {
   Underline,
 } from "lucide-react";
 
-export const TiptapToolbar = ({ editor }) => {
+import { Editor } from "@tiptap/react";
+
+export const TiptapToolbar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
     return null;
   }

@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export async function POST() {
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
-    console.log(`logout-action [ERROR]: ${nextCookie.error}`);
+    console.error(`logout-action [ERROR]: ${nextCookie.error}`);
     return responseBuilder({ message: "Bad Request" }, 400);
   }
 
@@ -18,7 +18,8 @@ export async function POST() {
   const session = await prisma.session.findUnique({
     where: { session: sessionCookie.value },
   });
-  if (session.deletedAt) {
+
+  if (!session || session.deletedAt) {
     nextCookie.data.delete("session_id");
     return responseBuilder();
   }
@@ -32,7 +33,7 @@ export async function POST() {
   );
 
   if (result.error) {
-    console.log(`logout-action [ERROR]: ${result.error}`);
+    console.error(`logout-action [ERROR]: ${result.error}`);
     return responseBuilder({ message: "failed execute logout" }, 422);
   }
   nextCookie.data.delete("session_id");

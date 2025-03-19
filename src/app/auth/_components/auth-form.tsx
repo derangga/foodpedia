@@ -10,8 +10,8 @@ import {
   Link,
   Form,
 } from "@heroui/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Key, useActionState, useEffect, useState } from "react";
 import { GoogleIcon } from "./google-icon";
 import {
   loginAction,
@@ -23,7 +23,7 @@ export const AuthForm = () => {
   const searchParams = useSearchParams();
   const selectedTab = searchParams.get("tab");
   const router = useRouter();
-  const [selected, setSelected] = useState(selectedTab || "login");
+  const [selected, setSelected] = useState<string>(selectedTab || "login");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loginState, formAction, isLoginLoading] = useActionState(
@@ -35,18 +35,18 @@ export const AuthForm = () => {
     null
   );
 
-  const onTabChange = (key) => {
-    setSelected(key);
+  const onTabChange = (key: Key) => {
+    setSelected(key.toString());
     if (Object.keys(errors).length > 0) {
       setErrors({});
     }
   };
 
-  const onRegisterSubmit = async (e) => {
+  const onRegisterSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formEvent = e.currentTarget;
     const form = new FormData(formEvent);
-    const password = Object.fromEntries(form)?.password;
+    const password = form.get("password") as string;
 
     setIsLoading(true);
 

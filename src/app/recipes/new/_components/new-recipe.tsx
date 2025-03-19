@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, Key, useEffect, useRef, useState } from "react";
 import TipTap from "../../_components/tiptap";
 import {
   addToast,
@@ -15,17 +15,26 @@ import Link from "next/link";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
 import { createRecipeActions } from "../_actions/recipe";
 import { redirect } from "next/navigation";
+import { User } from "@/model/user";
 
-export const NewRecipe = ({ currentUser, categories }) => {
-  const headerRef = useRef(null);
-  let stepToCook = useRef("");
+export const NewRecipe = ({
+  currentUser,
+  categories,
+}: {
+  currentUser: User;
+  categories: string[];
+}) => {
+  const headerRef = useRef<HTMLElement | null>(null);
+  const stepToCook = useRef<string>("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+    []
+  );
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const [ingredients, setIngredients] = useState([]);
-  const handleContentChange = (content) => {
-    stepToCook = content;
+  const [ingredients, setIngredients] = useState<Array<string>>([]);
+  const handleContentChange = (content: string) => {
+    stepToCook.current = content;
   };
 
   useEffect(() => {
@@ -47,8 +56,8 @@ export const NewRecipe = ({ currentUser, categories }) => {
   }, [headerRef]);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (event.target.id !== "category-btn") {
+    function handleClickOutside(event: MouseEvent) {
+      if ((event.target as Element).id !== "category-btn") {
         setIsCategoryOpen(false);
       }
     }
@@ -58,9 +67,9 @@ export const NewRecipe = ({ currentUser, categories }) => {
     };
   }, []);
 
-  const onCornerMenuAction = (key) => {};
+  const onCornerMenuAction = (key: Key) => {};
 
-  const onAddIngredients = (e) => {
+  const onAddIngredients = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formEvent = e.currentTarget;
@@ -73,12 +82,12 @@ export const NewRecipe = ({ currentUser, categories }) => {
     formEvent.reset();
   };
 
-  const onDeleteIngredient = (name) => {
+  const onDeleteIngredient = (name: string) => {
     const temp = ingredients.filter((e) => e !== name);
     setIngredients(temp);
   };
 
-  const onClickCategory = (name) => {
+  const onClickCategory = (name: string) => {
     if (selectedCategories.includes(name)) return;
     if (selectedCategories.length >= 4) return;
 
@@ -86,18 +95,18 @@ export const NewRecipe = ({ currentUser, categories }) => {
     setIsCategoryOpen(false);
   };
 
-  const onDeleteCategory = (name) => {
+  const onDeleteCategory = (name: string) => {
     const temp = selectedCategories.filter((e) => e !== name);
     setSelectedCategories(temp);
   };
 
-  const onPublishContent = async (e) => {
+  const onPublishContent = async (e: FormEvent<HTMLFormElement>) => {
     setDialogOpen(true);
     e.preventDefault();
     const formEvent = e.currentTarget;
     const formData = new FormData(formEvent);
     const maxImgSize = 500 * 1000; // max 500kb
-    const image = formData.get("image");
+    const image = formData.get("image") as File;
     if (image.size > maxImgSize) {
       addToast({
         title: "Failed create recipe",
@@ -107,17 +116,17 @@ export const NewRecipe = ({ currentUser, categories }) => {
       return;
     }
 
-    formData.append("content", stepToCook);
-    formData.append("ingredients", ingredients);
-    formData.append("categories", selectedCategories);
+    formData.append("content", stepToCook.current);
+    formData.append("ingredients", JSON.stringify(ingredients));
+    formData.append("categories", JSON.stringify(selectedCategories));
 
     const recipe = await createRecipeActions(formData);
     setDialogOpen(false);
-    if (recipe?.error) {
+    if (recipe.error) {
       addToast({
         title: "Failed create recipe",
         description: `${
-          recipe?.error || "please try again to insert the recipe later"
+          recipe.error || "please try again to insert the recipe later"
         }`,
         color: "danger",
       });
@@ -273,7 +282,7 @@ export const NewRecipe = ({ currentUser, categories }) => {
             )}
           </form>
         </div>
-        <TipTap content={stepToCook} onChange={handleContentChange} />
+        <TipTap content={stepToCook.current} onChange={handleContentChange} />
         {isDialogOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="flex bg-white p-6 rounded-lg shadow-lg w-60 gap-3 items-center">

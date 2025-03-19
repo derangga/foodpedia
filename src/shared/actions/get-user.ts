@@ -2,7 +2,7 @@ import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function getUserBySessionAction(sessionId: string) {
+export async function getUserBySessionAction(sessionId: string | undefined) {
   if (!sessionId) return null;
 
   const session = await prisma.session.findUnique({
@@ -27,7 +27,7 @@ export async function getUserBySessionAction(sessionId: string) {
 export async function getUserAction() {
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
-    console.log(`get-user [ERROR]: ${nextCookie.error}`);
+    console.error(`get-user [ERROR]: ${nextCookie.error}`);
     return null;
   }
 

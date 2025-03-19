@@ -33,7 +33,7 @@ export async function uploadImage({
     const fileUpload = await s3Client.send(command);
     return fileUpload;
   } catch (error) {
-    console.log(`uploadImage [ERROR]: ${error}`);
+    console.error(`uploadImage [ERROR]: ${error}`);
     return null;
   }
 }

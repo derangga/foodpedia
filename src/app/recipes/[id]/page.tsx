@@ -11,33 +11,37 @@ import { CommentBox } from "./_components/comment-box";
 import { imgURL } from "@/utils/image-url";
 import { ImageClient } from "./_components/image-client";
 
-export default async function Page({ params }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const authStatus = await authenticationStatus();
   const recipe = await getDetailRecipeAction(Number(id));
-  const { favorite } = recipe._count;
+  const favorite = recipe?._count?.favorite;
   const currentUser = await getUserBySessionAction(authStatus?.sessionId);
-  const sanitizeDescription = DOMPurify.sanitize(recipe.description);
-  const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
+  const sanitizeDescription = DOMPurify.sanitize(recipe?.description || "");
+  const imgSrc = imgURL(`${recipe?.id}/${recipe?.image}`);
 
   return (
     <>
-      <AppHeader authStatus={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
       <main className="max-w-3xl m-auto p-8 gap-8">
         <section className="relative rounded-xl w-full h-96 overflow-hidden my-8">
           {/* Due to issue render on SSR use client side instead */}
           <ImageClient
             src={imgSrc}
-            alt={recipe.title}
+            alt={recipe?.title}
             className="object-cover w-full h-full"
           />
         </section>
         <section className="w-full">
-          <h1 className="font-poppins font-bold text-4xl">{recipe.title}</h1>
+          <h1 className="font-poppins font-bold text-4xl">{recipe?.title}</h1>
           <Publisher
             className="mt-6"
-            name={recipe.user.name}
-            createdAt={recipe.createdAt}
+            name={recipe?.user.name}
+            createdAt={recipe?.createdAt}
           />
           <div className="flex flex-row border-y py-4 my-6 px-4 gap-4">
             <div className="flex gap-2 items-center hover:cursor-pointer">
@@ -60,11 +64,11 @@ export default async function Page({ params }) {
               className="hover:cursor-pointer"
             />
           </div>
-          <div>{recipe.story}</div>
+          <div>{recipe?.story}</div>
           <div className="my-4">
             <div className="font-poppins font-semibold">Categories :</div>
             <p className="font-bold text-orange-400">
-              {recipe.categories.join()}
+              {recipe?.categories.join()}
             </p>
           </div>
           <Card radius="md" className="p-7">
@@ -75,7 +79,7 @@ export default async function Page({ params }) {
             </CardHeader>
             <CardBody className="p-0 mt-4">
               <ul className="list-disc list-inside space-y-2">
-                {recipe.ingredients.map((e, idx) => (
+                {recipe?.ingredients.map((e, idx) => (
                   <li key={idx + 1}>{e}</li>
                 ))}
               </ul>

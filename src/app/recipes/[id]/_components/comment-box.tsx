@@ -2,7 +2,7 @@
 import { Textarea, Button, Divider } from "@heroui/react";
 import { useState } from "react";
 
-export const CommentBox = ({ className }) => {
+export const CommentBox = ({ className }: { className?: string }) => {
   const [comment, setComment] = useState("");
   return (
     <>

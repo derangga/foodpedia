@@ -38,7 +38,7 @@ export async function getRecipeByUserIdAction() {
   );
 
   if (recipes.error) {
-    console.log(`get-recipe-by-uid [ERROR]: ${recipes.error}`);
+    console.error(`get-recipe-by-uid [ERROR]: ${recipes.error}`);
     return [];
   }
 

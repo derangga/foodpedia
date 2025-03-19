@@ -15,7 +15,7 @@ export async function provideSessionAction(userId: number) {
 
   const nextCookie = await tryCatch(cookies());
   if (nextCookie.error) {
-    console.log(`session-action [ERROR]: ${nextCookie.error}`);
+    console.error(`session-action [ERROR]: ${nextCookie.error}`);
   }
   nextCookie.data?.set("session_id", session.session, {
     httpOnly: true,

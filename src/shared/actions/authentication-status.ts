@@ -1,13 +1,14 @@
 "use server";
+import { AuthStatus } from "@/model/auth-status";
 import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function authenticationStatus() {
+export async function authenticationStatus(): Promise<AuthStatus> {
   const nextCookie = await tryCatch(cookies());
 
   if (nextCookie.error) {
-    console.log(`validateAuthAction [ERROR]: ${nextCookie.error}`);
+    console.error(`validateAuthAction [ERROR]: ${nextCookie.error}`);
   }
   const cookie = nextCookie.data;
 
