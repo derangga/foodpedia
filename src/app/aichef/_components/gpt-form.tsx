@@ -60,6 +60,10 @@ export const GptForm = ({ currenetUser }: { currenetUser: User }) => {
 
     setIsLoading(true);
     const result = await askRecipedetail(recipeName);
+
+    // TODO: handle null response
+    if (!result) return;
+
     tempChat.push({
       sender: "gpt",
       type: "recipe",
@@ -99,7 +103,6 @@ export const GptForm = ({ currenetUser }: { currenetUser: User }) => {
       if (chat.type === "recipe") {
         const gptRecipeGuide = message as GptRecipeGuide;
         const recipe = gptRecipeGuide.recipe;
-        console.log(recipe);
         const categories = recipe.categories.join(", ");
         return (
           <div key={key} className="flex flex-col gap-2">

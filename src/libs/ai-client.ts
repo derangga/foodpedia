@@ -20,7 +20,7 @@ const removeBackticks = (input: string | null) => {
 export async function promptSuggestionRecipe(command: string) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: "google/gemini-2.0-flash-thinking-exp-1219:free",
       messages: [
         { role: "system", content: SUGGESTION_FOOD_PROMPT },
         { role: "user", content: command },
@@ -39,7 +39,7 @@ export async function promptSuggestionRecipe(command: string) {
 export async function promptDetailRecipe(command: string) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-exp:free",
+      model: "google/gemini-2.0-flash-thinking-exp-1219:free",
       messages: [
         { role: "system", content: FOOD_RECIPE_BASED_ON_NAME },
         {
@@ -51,7 +51,16 @@ export async function promptDetailRecipe(command: string) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const result = JSON.parse(finalOutput);
-    return result as GptRecipeGuide;
+
+    // sometimes GPT is not consistent generate array of string
+    // const some data might missing due to filter
+    const ingredients = result.recipe.ingredients.filter(
+      (e: any) => typeof e === "string"
+    );
+
+    result.ingredients = ingredients;
+    const serializer = result as GptRecipeGuide;
+    return serializer;
   } catch (error) {
     console.log(`prompt [ERROR]: ${error}`);
     return null;
