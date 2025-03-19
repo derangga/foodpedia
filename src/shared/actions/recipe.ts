@@ -6,19 +6,14 @@ export async function getRecipes() {
   const recipes = prisma.recipe.findMany();
   return recipes;
 }
-export async function getDetailRecipeAction(recipeId) {
+export async function getDetailRecipeAction(recipeId: number) {
   const recipe = prisma.recipe.findUnique({
     where: { id: recipeId },
     include: {
       user: {
-        omit: {
-          email: true,
-          password: true,
-          registerType: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
+        select: {
+          id: true,
+          name: true,
         },
       },
       _count: {
@@ -32,6 +27,8 @@ export async function getDetailRecipeAction(recipeId) {
 
 export async function getRecipeByUserIdAction() {
   const user = await getUserAction();
+  if (!user) return null;
+
   const recipes = await tryCatch(
     prisma.recipe.findMany({
       where: {

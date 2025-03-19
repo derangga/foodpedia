@@ -11,7 +11,7 @@ export async function authenticationStatus() {
   }
   const cookie = nextCookie.data;
 
-  const sessionId = cookie.get("session_id");
+  const sessionId = cookie?.get("session_id");
   if (!sessionId || sessionId.value === "") return { isAuthenticate: false };
 
   const session = await prisma.session.findUnique({

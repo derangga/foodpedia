@@ -9,7 +9,7 @@ import { getRecipes } from "../shared/actions/recipe";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
-  const currentUser = await getUserBySessionAction(authStatus?.sessionId);
+  const currentUser = await getUserBySessionAction(authStatus.sessionId || "");
 
   // TODO: replace with top 5 recipe favorite
   const recipes = await getRecipes();

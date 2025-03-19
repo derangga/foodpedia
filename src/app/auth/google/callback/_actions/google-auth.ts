@@ -1,14 +1,16 @@
 "use server";
 
 import { prisma } from "@/libs/postgres";
-import { googleClient } from "@/libs/google";
+import { googleClient } from "@/libs/google/google-client";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { QueryParams } from "@/shared/params";
+import { GoogleUserInfo } from "@/libs/google/user";
 
-export async function validateGoogleAuth(params) {
+export async function validateGoogleAuth(params: QueryParams) {
   try {
     const cookie = await cookies();
-    const code = params?.code;
+    const code = params.code as string;
     const codeVerifier = cookie.get("codeVerifier")?.value || "";
     const tokens = await googleClient().validateAuthorizationCode(
       code,
@@ -24,37 +26,39 @@ export async function validateGoogleAuth(params) {
         },
       }
     );
-    const user = await response.json();
+    const x = await response.json();
+    console.log(x);
+    const user: GoogleUserInfo = x;
     return response.ok ? user : null;
   } catch (e) {
     return null;
   }
 }
 
-export const appAuthFlow = async (googleAccount) => {
+export async function appAuthFlow(googleAccount: GoogleUserInfo) {
   const user = await prisma.user.findUnique({
     where: { email: googleAccount.email },
   });
-
+  const secret = process.env.JWT_SECRET || "";
   if (user) {
     const token = jwt.sign(
       {
         uid: user.id,
       },
-      process.env.JWT_SECRET,
+      secret,
       { expiresIn: 3 * 60 }
     );
     return { token, authType: "login" };
   } else {
     return { authType: "register" };
   }
-};
+}
 
-export async function registerGoogleAction(googleAccount) {
+export async function registerGoogleAction(googleAccount: GoogleUserInfo) {
   const name = googleAccount.name;
   const email = googleAccount.email;
 
-  const response = (success, message, token) => {
+  const response = (success: boolean, message: string, token?: string) => {
     return {
       success,
       message,
@@ -74,11 +78,12 @@ export async function registerGoogleAction(googleAccount) {
     return response(false, "failed register user");
   }
 
+  const secret = process.env.JWT_SECRET || "";
   const token = jwt.sign(
     {
       uid: user.id,
     },
-    process.env.JWT_SECRET,
+    secret,
     { expiresIn: 3 * 60 }
   );
 
