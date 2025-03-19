@@ -26,9 +26,7 @@ export async function validateGoogleAuth(params: QueryParams) {
         },
       }
     );
-    const x = await response.json();
-    console.log(x);
-    const user: GoogleUserInfo = x;
+    const user: GoogleUserInfo = await response.json();
     return response.ok ? user : null;
   } catch (e) {
     return null;
