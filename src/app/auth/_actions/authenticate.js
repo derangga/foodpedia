@@ -6,7 +6,7 @@ import { tryCatch } from "@/utils/try-catch";
 import { getUserByEmailAction } from "@/shared/actions/get-user";
 import { cookies } from "next/headers";
 import * as arctic from "arctic";
-import { googleClient } from "@/libs/google";
+import { googleClient } from "@/libs/google/google-client";
 import { redirect } from "next/navigation";
 
 export async function loginAction(_, formData) {

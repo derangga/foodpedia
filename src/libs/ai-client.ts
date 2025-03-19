@@ -11,11 +11,12 @@ const openai = new OpenAI({
 
 export default openai;
 
-const removeBackticks = (input) => {
+const removeBackticks = (input: string | null) => {
+  if (!input) return "";
   return input.replace(/```json\s*|\s*```/g, "");
 };
 
-export async function promptSuggestionRecipe(command) {
+export async function promptSuggestionRecipe(command: string) {
   try {
     const completion = await openai.chat.completions.create({
       model: "google/gemini-2.0-flash-exp:free",
@@ -34,7 +35,7 @@ export async function promptSuggestionRecipe(command) {
   }
 }
 
-export async function promptDetailRecipe(command) {
+export async function promptDetailRecipe(command: string) {
   try {
     const completion = await openai.chat.completions.create({
       model: "google/gemini-2.0-flash-exp:free",

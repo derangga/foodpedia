@@ -5,8 +5,13 @@ import {
   validateGoogleAuth,
 } from "./_actions/google-auth";
 import { LoadingBar } from "./_components/loading-bar";
+import { SearchParams } from "@/shared/params";
 
-export default async function Page({ searchParams }) {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const query = await searchParams;
   const account = await validateGoogleAuth(query);
 
@@ -18,7 +23,7 @@ export default async function Page({ searchParams }) {
   let token = authFlow.token || "";
   if (authFlow.authType === "register") {
     const result = await registerGoogleAction(account);
-    token = result.token;
+    token = result.token || "";
 
     if (!result.success) {
       redirect("/auth");

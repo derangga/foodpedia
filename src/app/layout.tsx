@@ -17,7 +17,11 @@ export const metadata = {
   description: "Food recipe explorer",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
       <body

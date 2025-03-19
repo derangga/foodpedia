@@ -2,7 +2,7 @@ import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function getUserBySessionAction(sessionId) {
+export async function getUserBySessionAction(sessionId: string) {
   if (!sessionId) return null;
 
   const session = await prisma.session.findUnique({
@@ -31,10 +31,13 @@ export async function getUserAction() {
     return null;
   }
 
-  const sessionId = nextCookie.data.get("session_id").value;
+  const sessionId = nextCookie.data?.get("session_id")?.value;
   const session = await prisma.session.findUnique({
     where: { session: sessionId },
   });
+
+  if (!session) return null;
+
   const user = await prisma.user.findUnique({
     omit: {
       password: true,
@@ -45,7 +48,7 @@ export async function getUserAction() {
   return user;
 }
 
-export async function getUserByEmailAction(email) {
+export async function getUserByEmailAction(email: string) {
   const user = await prisma.user.findUnique({
     where: {
       email: email,
