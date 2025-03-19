@@ -11,6 +11,7 @@ import { tryCatch } from "@/utils/try-catch";
 import { redirect, useRouter } from "next/navigation";
 import { User } from "@/model/user";
 import { GptRecipeGuide, GptRecipeSuggestions } from "@/model/gpt";
+import { ChatBubble } from "./chat-bubble";
 
 type ChatModel = {
   sender: string;
@@ -99,55 +100,14 @@ export const GptForm = ({ currenetUser }: { currenetUser: User }) => {
         </div>
       );
     } else {
-      const message = chat.message;
-      if (chat.type === "recipe") {
-        const gptRecipeGuide = message as GptRecipeGuide;
-        const recipe = gptRecipeGuide.recipe;
-        const categories = recipe.categories.join(", ");
-        return (
-          <div key={key} className="flex flex-col gap-2">
-            <div className="font-semibold text-xl">{recipe.title}</div>
-            <div className="font-semibold text-xl">
-              Categories:{" "}
-              <span className="text-orange-400 text-base">{categories}</span>
-            </div>
-            <div className="font-semibold text-xl">Ingredients: </div>
-            <ul className="list-disc pl-4">
-              {recipe.ingredients?.map((e, idx) => (
-                <li key={idx + 1}>{e}</li>
-              ))}
-            </ul>
-            <div className="font-semibold text-xl">Guide to cook</div>
-            <ul className="list-disc pl-4">
-              {recipe.steps?.map((e, idx) => (
-                <li key={idx + 1}>{e.detail}</li>
-              ))}
-            </ul>
-          </div>
-        );
-      } else if (chat.type === "suggestion") {
-        const gptRecipeSuggestions = message as GptRecipeSuggestions;
-        return (
-          <div key={key} className="flex flex-col gap-2 w-[36rem]">
-            {gptRecipeSuggestions.recipes.map((e, idx) => (
-              <SuggestRecipeItem
-                key={idx + 1}
-                recipe={e}
-                askRecipe={askRecipe}
-              />
-            ))}
-          </div>
-        );
-      } else if (chat.type === "rejection") {
-        const gpt = message as GptRecipeSuggestions | GptRecipeGuide;
-        return (
-          <div key={key} className="py-2 px-4">
-            {gpt.reject_reason}
-          </div>
-        );
-      }
-
-      return <div key={key} />;
+      return (
+        <ChatBubble
+          key={key}
+          type={chat.type}
+          chatModel={chat.message}
+          askRecipe={askRecipe}
+        />
+      );
     }
   };
 
@@ -168,9 +128,13 @@ export const GptForm = ({ currenetUser }: { currenetUser: User }) => {
         />
       </header>
       <main className="grow py-8 px-3 flex flex-col w-1/2 mx-auto gap-10 overflow-scroll scrollbar-hide">
-        <div className="grow flex flex-col justify-end gap-3 px-4">
-          {chats.map((e, idx) => chatBubble(e, idx + 1))}
-        </div>
+        {chats.length === 0 ? (
+          <div className="my-14"></div>
+        ) : (
+          <div className="grow flex flex-col justify-end gap-3 px-4">
+            {chats.map((e, idx) => chatBubble(e, idx + 1))}
+          </div>
+        )}
         <form
           className="flex sticky bottom-0 gap-3 bg-white shadow-xl border rounded-3xl z-50 py-4 px-6"
           onSubmit={onSubmit}
