@@ -26,7 +26,7 @@ export const RecipeCardLG = (props: RecipeCardProps) => {
         <ImageClient
           src={imgSrc}
           alt={props.title}
-          className="object-cover h-full"
+          className="object-cover size-full"
         />
       </div>
       <div className="grow" />
