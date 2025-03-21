@@ -13,26 +13,45 @@ import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
-import { createRecipeActions } from "../_actions/recipe";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { User } from "@/model/user";
+import { updateRecipeActions } from "./_actions/edit-recipe";
 
-export const NewRecipe = ({
+export type RecipeDetail = {
+  id: number;
+  categories: string[];
+  title: string;
+  image: string | null;
+  userId: number;
+  ingredients: string[];
+  story: string | null;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+  deletedAt: Date | null;
+};
+
+export const EditRecipe = ({
   currentUser,
   categories,
+  recipe,
 }: {
   currentUser: User;
   categories: string[];
+  recipe: RecipeDetail;
 }) => {
+  const router = useRouter();
   const headerRef = useRef<HTMLElement | null>(null);
-  const stepToCook = useRef<string>("");
+  const stepToCook = useRef<string>(recipe.description);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<Array<string>>(
-    []
+    recipe.categories
   );
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const [ingredients, setIngredients] = useState<Array<string>>([]);
+  const [ingredients, setIngredients] = useState<Array<string>>(
+    recipe.ingredients
+  );
   const handleContentChange = (content: string) => {
     stepToCook.current = content;
   };
@@ -112,32 +131,27 @@ export const NewRecipe = ({
         color: "danger",
       });
       return;
-    } else if (image.size === 0) {
-      addToast({
-        title: "Failed create recipe",
-        description: "image should provided",
-        color: "danger",
-      });
     }
 
+    formData.append("id", `${recipe.id}`);
     formData.append("content", stepToCook.current);
     formData.append("ingredients", JSON.stringify(ingredients));
     formData.append("categories", JSON.stringify(selectedCategories));
 
-    const recipe = await createRecipeActions(formData);
+    const result = await updateRecipeActions(formData);
     setDialogOpen(false);
-    if (recipe.error) {
+    if (result.error) {
       addToast({
-        title: "Failed create recipe",
+        title: "Failed yodate recipe",
         description: `${
-          recipe.error || "please try again to insert the recipe later"
+          result.error || "please try again to update the recipe later"
         }`,
         color: "danger",
       });
       return;
     }
 
-    redirect("/recipes");
+    router.back();
   };
 
   return (
@@ -154,12 +168,20 @@ export const NewRecipe = ({
             height={100}
           />
         </Link>
-        <div className="flex flex-row items-center space-x-4">
+        <div className="flex flex-row items-center gap-6">
+          <div
+            className="font-poppins text-sm text-gray-500 hover:text-black hover:cursor-pointer"
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Back to profile
+          </div>
           <button
             className="font-poppins px-6 py-1 text-white bg-orange-200 hover:bg-orange-400 hover:cursor-pointer rounded-xl"
             form="recipe-form"
           >
-            Publish
+            Save
           </button>
           <AvatarMenu name={currentUser.email} />
         </div>
@@ -170,12 +192,14 @@ export const NewRecipe = ({
             <Input
               name="title"
               label="Title"
+              defaultValue={recipe.title}
               placeholder="Title: Baked BBQ Chicken Thighs"
               variant="bordered"
             />
             <Textarea
               label="Story"
               name="story"
+              defaultValue={recipe.story || ""}
               placeholder="Share a little more about this dish. What or who inspired you to cook it? What makes it special to you? What's your favourite way to eat it?"
               className="mt-2"
               variant="bordered"
@@ -186,6 +210,7 @@ export const NewRecipe = ({
               type="file"
               variant="bordered"
               className="mt-2"
+              defaultValue={recipe.image || ""}
               accept="image/png, image/webp"
             />
             <div className="relative">

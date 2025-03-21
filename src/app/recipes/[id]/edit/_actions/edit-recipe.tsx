@@ -6,12 +6,13 @@ import { getUserAction } from "@/shared/actions/get-user";
 import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
-type CreateRecipe = {
+type UpdateRecipe = {
   error: string | null;
 };
-export async function createRecipeActions(
+export async function updateRecipeActions(
   formData: FormData
-): Promise<CreateRecipe> {
+): Promise<UpdateRecipe> {
+  const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const story = formData.get("story") as string;
   const content = formData.get("content") as string;
@@ -21,6 +22,9 @@ export async function createRecipeActions(
   );
   const categories: string[] = JSON.parse(formData.get("categories") as string);
 
+  if (!id) {
+    return { error: "recipe identifier not found" };
+  }
   if (!title) {
     return { error: "title is empty" };
   }
@@ -41,10 +45,6 @@ export async function createRecipeActions(
     return { error: "content is empty" };
   }
 
-  if (image.size === 0) {
-    return { error: "image should provided" };
-  }
-
   const sanitizeContent = DOMPurify.sanitize(content);
 
   const user = await getUserAction();
@@ -52,30 +52,43 @@ export async function createRecipeActions(
     return { error: "failet get user data" };
   }
 
+  const data =
+    image.size === 0
+      ? {
+          title,
+          story,
+          categories: categories,
+          ingredients: ingredients,
+          description: sanitizeContent,
+        }
+      : {
+          title,
+          story,
+          categories: categories,
+          ingredients: ingredients,
+          description: sanitizeContent,
+          image: image.name,
+        };
+
   const recipe = await tryCatch(
-    prisma.recipe.create({
-      data: {
-        title,
-        story,
-        categories: categories,
-        ingredients: ingredients,
-        description: sanitizeContent,
-        userId: user.id,
-        image: image.size !== 0 ? image.name : null,
-      },
+    prisma.recipe.update({
+      where: { id: Number(id) },
+      data,
     })
   );
 
   if (recipe.error) {
-    console.error(`create-recipe [ERROR]: ${recipe.error}`);
-    return { error: "failed create recipe" };
+    console.error(`update-recipe [ERROR]: ${recipe.error}`);
+    return { error: "failed update recipe" };
   }
 
-  await uploadImage({
-    key: image.name,
-    folder: `${recipe.data.id}`,
-    body: image,
-  });
+  if (image.size > 0) {
+    await uploadImage({
+      key: image.name,
+      folder: `${recipe.data.id}`,
+      body: image,
+    });
+  }
 
   return { error: null };
 }

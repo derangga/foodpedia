@@ -67,9 +67,9 @@ export default async function Page({
           <div>{recipe?.story}</div>
           <div className="my-4">
             <div className="font-poppins font-semibold">Categories :</div>
-            <p className="font-bold text-orange-400">
+            <div className="font-bold text-orange-400">
               {recipe?.categories.join()}
-            </p>
+            </div>
           </div>
           <Card radius="md" className="p-7">
             <CardHeader className="p-0">
@@ -89,15 +89,20 @@ export default async function Page({
             <h2 className="font-poppins text-2xl font-semibold">
               Cooking <span className="text-orange-400">Instructions</span>
             </h2>
-            <div dangerouslySetInnerHTML={{ __html: sanitizeDescription }} />
+            <div
+              dangerouslySetInnerHTML={{ __html: sanitizeDescription }}
+              className="marker:text-black"
+            />
           </article>
           <Divider className="my-8" />
         </section>
-        <section>
-          <div className="font-poppins font-semibold text-2xl">Comments</div>
-          {authStatus.isAuthenticate && <CommentBox className="mt-4" />}
-          <CommentItem className="mt-3" />
-        </section>
+        {recipe?.userId !== currentUser?.id && (
+          <section>
+            <div className="font-poppins font-semibold text-2xl">Comments</div>
+            {authStatus.isAuthenticate && <CommentBox className="mt-4" />}
+            <CommentItem className="mt-3" />
+          </section>
+        )}
       </main>
     </>
   );
