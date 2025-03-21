@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { FilePenLine, Search } from "lucide-react";
 import { AvatarMenu } from "./avatar-menu";
-import { Key, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input, Button } from "@heroui/react";
-import { redirect, useRouter } from "next/navigation";
-import { tryCatch } from "@/utils/try-catch";
+import { useRouter } from "next/navigation";
 import { AuthStatus } from "@/model/auth-status";
 
 export type AppHeaderProps = {
@@ -36,21 +35,6 @@ export const AppHeader = (props: AppHeaderProps) => {
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
-
-  const onCornerMenuAction = async (key: Key) => {
-    if (key === "sign-out") {
-      const result = await tryCatch(
-        fetch("/api/auth/logout", {
-          method: "POST",
-        })
-      );
-      if (result.error) return;
-
-      redirect("/");
-    } else {
-      router.push(`/${key}`);
-    }
-  };
 
   return (
     <header
@@ -106,7 +90,7 @@ export const AppHeader = (props: AppHeaderProps) => {
           </Link>
         )}
         {isLogin ? (
-          <AvatarMenu name={name} onCornerMenuAction={onCornerMenuAction} />
+          <AvatarMenu name={name} />
         ) : (
           <div className="space-x-2">
             <Button

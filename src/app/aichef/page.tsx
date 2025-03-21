@@ -1,7 +1,8 @@
 import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { GptForm } from "./_components/gpt-form";
-import { getUserBySessionAction } from "@/shared/actions/get-user";
+import { getUserById } from "@/shared/actions/get-user";
 import { redirect } from "next/navigation";
+import { User } from "@/model/user";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
@@ -9,11 +10,11 @@ export default async function Page() {
     redirect("/");
   }
 
-  const user = await getUserBySessionAction(authStatus?.sessionId);
+  const user = await getUserById(authStatus.userId);
 
   if (!user) {
     redirect("/");
   }
 
-  return <GptForm currenetUser={user} />;
+  return <GptForm authStatus={authStatus} currentUser={user as User} />;
 }

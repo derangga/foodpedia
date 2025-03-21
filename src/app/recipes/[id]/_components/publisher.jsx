@@ -5,7 +5,7 @@ export const Publisher = ({ className, name, createdAt }) => {
   const publishTime = dateFormat(createdAt);
   return (
     <div className={`flex flex-row gap-4 items-center ${className || ""}`}>
-      <div className="flex items-center justify-center h-10 w-10 bg-black rounded-full">
+      <div className="flex items-center justify-center size-10 bg-black rounded-full">
         <div className="text-white">{avatar}</div>
       </div>
       <div className="flex flex-col">

@@ -13,7 +13,9 @@ export async function authenticationStatus(): Promise<AuthStatus> {
   const cookie = nextCookie.data;
 
   const sessionId = cookie?.get("session_id");
+  const userId = cookie?.get("user_id");
   if (!sessionId || sessionId.value === "") return { isAuthenticate: false };
+  if (!userId || userId.value === "") return { isAuthenticate: false };
 
   const session = await prisma.session.findUnique({
     where: {
@@ -23,11 +25,15 @@ export async function authenticationStatus(): Promise<AuthStatus> {
   });
 
   if (!session) {
-    return { isAuthenticate: false, sessionId: sessionId.value };
+    return { isAuthenticate: false };
   }
 
   const now = new Date();
   if (session.expiresAt < now) return { isAuthenticate: false };
 
-  return { isAuthenticate: true, sessionId: sessionId.value };
+  return {
+    isAuthenticate: true,
+    sessionId: sessionId.value,
+    userId: userId.value,
+  };
 }

@@ -1,4 +1,4 @@
-import { getUserBySessionAction } from "@/shared/actions/get-user";
+import { getUserById } from "@/shared/actions/get-user";
 import { getDetailRecipeAction } from "../../../shared/actions/recipe";
 import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { AppHeader } from "@/shared/components/app-header";
@@ -20,7 +20,7 @@ export default async function Page({
   const authStatus = await authenticationStatus();
   const recipe = await getDetailRecipeAction(Number(id));
   const favorite = recipe?._count?.favorite;
-  const currentUser = await getUserBySessionAction(authStatus?.sessionId);
+  const currentUser = await getUserById(authStatus.userId);
   const sanitizeDescription = DOMPurify.sanitize(recipe?.description || "");
   const imgSrc = imgURL(`${recipe?.id}/${recipe?.image}`);
 

@@ -1,5 +1,5 @@
 import { authenticationStatus } from "@/shared/actions/authentication-status";
-import { getUserBySessionAction } from "@/shared/actions/get-user";
+import { getUserById } from "@/shared/actions/get-user";
 import { AppHeader } from "@/shared/components/app-header";
 import Image from "next/image";
 import { getRecipes } from "../../shared/actions/recipe";
@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
-  const currentUser = await getUserBySessionAction(authStatus.sessionId);
+  const currentUser = await getUserById(authStatus.userId);
   const recipes = await getRecipes();
   return (
     <>
