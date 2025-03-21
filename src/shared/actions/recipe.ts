@@ -32,6 +32,7 @@ export async function getRecipeByUserIdAction(userId: string | undefined) {
     prisma.recipe.findMany({
       where: {
         userId: Number(userId),
+        deletedAt: null,
       },
     })
   );

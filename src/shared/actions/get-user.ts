@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 export async function getUserById(userId: string | undefined) {
   if (!userId) return null;
 
-  console.log("cek: ", userId);
   const user = await prisma.user.findUnique({
     where: { id: Number(userId) },
     select: {

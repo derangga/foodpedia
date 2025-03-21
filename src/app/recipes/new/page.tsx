@@ -1,6 +1,6 @@
 import { getUserById } from "@/shared/actions/get-user";
 import { NewRecipe } from "./_components/new-recipe";
-import { getCategoriesAction } from "./_actions/categories";
+import { getCategoriesAction } from "../../../shared/actions/categories";
 import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { redirect } from "next/navigation";
 import { User } from "@/model/user";

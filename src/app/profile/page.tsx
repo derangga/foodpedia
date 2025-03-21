@@ -2,10 +2,9 @@ import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { getUserById } from "@/shared/actions/get-user";
 import { getRecipeByUserIdAction } from "@/shared/actions/recipe";
 import { AppHeader } from "@/shared/components/app-header";
-import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
 import { Divider } from "@heroui/react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { RecipeCardSM } from "@/app/profile/_components/recipe-card-sm";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
@@ -40,11 +39,9 @@ export default async function Page() {
           </div>
         </div>
         <Divider className="my-14" />
-        <div className="grid grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-2 gap-4 mt-6">
           {recipes.map((e, idx) => (
-            <Link key={idx + 1} href={`/recipes/${e.id}`}>
-              <RecipeCardLG {...e} />
-            </Link>
+            <RecipeCardSM {...e} key={idx + 1} />
           ))}
         </div>
       </main>
