@@ -1,23 +1,20 @@
+"use server";
 import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function getUserBySessionAction(sessionId: string | undefined) {
-  if (!sessionId) return null;
+export async function getUserById(userId: string | undefined) {
+  if (!userId) return null;
 
-  const session = await prisma.session.findUnique({
-    where: { session: sessionId },
-  });
-
-  if (!session) return null;
-
+  console.log("cek: ", userId);
   const user = await prisma.user.findUnique({
-    omit: {
-      password: true,
-    },
-    where: {
-      id: session.userId,
-      deletedAt: null,
+    where: { id: Number(userId) },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      createdAt: true,
     },
   });
 
@@ -31,18 +28,12 @@ export async function getUserAction() {
     return null;
   }
 
-  const sessionId = nextCookie.data?.get("session_id")?.value;
-  const session = await prisma.session.findUnique({
-    where: { session: sessionId },
-  });
-
-  if (!session) return null;
-
+  const userId = nextCookie.data?.get("user_id")?.value || "";
   const user = await prisma.user.findUnique({
     omit: {
       password: true,
     },
-    where: { id: session.userId },
+    where: { id: Number(userId) },
   });
 
   return user;

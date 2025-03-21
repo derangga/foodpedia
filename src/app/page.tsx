@@ -1,5 +1,5 @@
 import { authenticationStatus } from "@/shared/actions/authentication-status";
-import { getUserBySessionAction } from "@/shared/actions/get-user";
+import { getUserById } from "@/shared/actions/get-user";
 import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
 import { CircleUserRound, Earth, Heart } from "lucide-react";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import { getRecipes } from "../shared/actions/recipe";
 
 export default async function Page() {
   const auth = await authenticationStatus();
-  const currentUser = await getUserBySessionAction(auth.sessionId);
+  const currentUser = await getUserById(auth.userId);
 
   // TODO: replace with top 5 recipe favorite
   const recipes = await getRecipes();

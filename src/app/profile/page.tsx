@@ -1,15 +1,20 @@
 import { authenticationStatus } from "@/shared/actions/authentication-status";
-import { getUserBySessionAction } from "@/shared/actions/get-user";
+import { getUserById } from "@/shared/actions/get-user";
 import { getRecipeByUserIdAction } from "@/shared/actions/recipe";
 import { AppHeader } from "@/shared/components/app-header";
 import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
 import { Divider } from "@heroui/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
-  const currentUser = await getUserBySessionAction(authStatus?.sessionId);
-  const recipes = (await getRecipeByUserIdAction()) || [];
+  if (!authStatus.isAuthenticate) {
+    redirect("/");
+  }
+
+  const currentUser = await getUserById(authStatus.userId);
+  const recipes = await getRecipeByUserIdAction(authStatus.userId);
 
   return (
     <div>

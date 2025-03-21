@@ -1,10 +1,10 @@
 import { prisma } from "@/libs/postgres";
-import { getUserAction } from "./get-user";
 import { tryCatch } from "@/utils/try-catch";
 
 export async function getRecipes() {
-  const recipes = prisma.recipe.findMany();
-  return recipes;
+  const result = await tryCatch(prisma.recipe.findMany());
+  if (result.error) return [];
+  return result.data;
 }
 export async function getDetailRecipeAction(recipeId: number) {
   const recipe = prisma.recipe.findUnique({
@@ -25,14 +25,13 @@ export async function getDetailRecipeAction(recipeId: number) {
   return recipe;
 }
 
-export async function getRecipeByUserIdAction() {
-  const user = await getUserAction();
-  if (!user) return null;
+export async function getRecipeByUserIdAction(userId: string | undefined) {
+  if (!userId) return [];
 
   const recipes = await tryCatch(
     prisma.recipe.findMany({
       where: {
-        userId: user.id,
+        userId: Number(userId),
       },
     })
   );

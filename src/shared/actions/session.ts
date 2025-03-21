@@ -22,4 +22,9 @@ export async function provideSessionAction(userId: number) {
     expires: date,
     secure: process.env.NODE_ENV === "production",
   });
+  nextCookie.data?.set("user_id", `${userId}`, {
+    httpOnly: true,
+    expires: date,
+    secure: process.env.NODE_ENV === "production",
+  });
 }

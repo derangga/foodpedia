@@ -36,7 +36,10 @@ export async function POST() {
     console.error(`logout-action [ERROR]: ${result.error}`);
     return responseBuilder({ message: "failed execute logout" }, 422);
   }
-  nextCookie.data.delete("session_id");
+
+  nextCookie.data.getAll().forEach((cookie) => {
+    nextCookie.data.delete(cookie.name);
+  });
 
   return responseBuilder();
 }
