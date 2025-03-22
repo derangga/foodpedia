@@ -7,13 +7,8 @@ export type RecipeCardProps = {
   title: string;
   image: string | null;
   createdAt: Date;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
   userId: number;
   categories: string[];
-  ingredients: string[];
-  story: string | null;
-  description: string;
 };
 export const RecipeCardLG = (props: RecipeCardProps) => {
   const imgSrc = imgURL(`${props.id}/${props.image}`);

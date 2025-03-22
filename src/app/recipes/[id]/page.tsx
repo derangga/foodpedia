@@ -3,13 +3,15 @@ import { getDetailRecipeAction } from "../../../shared/actions/recipe";
 import { authenticationStatus } from "@/shared/actions/authentication-status";
 import { AppHeader } from "@/shared/components/app-header";
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
 import { Publisher } from "./_components/publisher";
 import { CommentItem } from "./_components/comment-item";
 import { CommentBox } from "./_components/comment-box";
 import { imgURL } from "@/utils/image-url";
 import { ImageClient } from "./_components/image-client";
+import { ContentAnchor } from "./_components/content-anchor";
+import { Recipe } from "@/model/recipe";
+import { isFavoritedAction } from "@/shared/actions/favorite";
 
 export default async function Page({
   params,
@@ -21,6 +23,7 @@ export default async function Page({
   const recipe = await getDetailRecipeAction(Number(id));
   const favorite = recipe?._count?.favorite;
   const currentUser = await getUserById(authStatus.userId);
+  const isFavorited = await isFavoritedAction(authStatus.userId, recipe?.id);
   const sanitizeDescription = DOMPurify.sanitize(recipe?.description || "");
   const imgSrc = imgURL(`${recipe?.id}/${recipe?.image}`);
 
@@ -43,27 +46,12 @@ export default async function Page({
             name={recipe?.user.name}
             createdAt={recipe?.createdAt}
           />
-          <div className="flex flex-row border-y py-4 my-6 px-4 gap-4">
-            <div className="flex gap-2 items-center hover:cursor-pointer">
-              <Heart color="#6b7280" strokeWidth={1} size={22} />
-              <div className="font-poppins text-gray-400 hover:text-gray-500 text-sm">
-                {favorite}
-              </div>
-            </div>
-            <div className="flex gap-2 items-center hover:cursor-pointer">
-              <MessageCircle color="#6b7280" strokeWidth={1} size={22} />
-              <div className="font-poppins text-gray-400 hover:text-gray-500 text-sm">
-                100
-              </div>
-            </div>
-            <div className="grow" />
-            <Share2
-              color="#6b7280"
-              strokeWidth={1}
-              size={22}
-              className="hover:cursor-pointer"
-            />
-          </div>
+          <ContentAnchor
+            isOwner={recipe?.userId === currentUser?.id}
+            favoriteCount={favorite}
+            isFavorited={isFavorited}
+            recipe={recipe as Recipe}
+          />
           <div>{recipe?.story}</div>
           <div className="my-4">
             <div className="font-poppins font-semibold">Categories :</div>
@@ -96,13 +84,13 @@ export default async function Page({
           </article>
           <Divider className="my-8" />
         </section>
-        {recipe?.userId !== currentUser?.id && (
-          <section>
-            <div className="font-poppins font-semibold text-2xl">Comments</div>
-            {authStatus.isAuthenticate && <CommentBox className="mt-4" />}
-            <CommentItem className="mt-3" />
-          </section>
-        )}
+        <section>
+          <div className="font-poppins font-semibold text-2xl">Comments</div>
+          {authStatus.isAuthenticate && recipe?.userId !== currentUser?.id && (
+            <CommentBox className="mt-4" />
+          )}
+          <CommentItem className="mt-3" />
+        </section>
       </main>
     </>
   );

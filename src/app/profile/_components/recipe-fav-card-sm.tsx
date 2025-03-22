@@ -2,10 +2,10 @@ import { ImageClient } from "@/app/recipes/[id]/_components/image-client";
 import { RecipeCardProps } from "../../../shared/components/recipe-card-lg";
 import { imgURL } from "@/utils/image-url";
 import dateFormat from "@/utils/date-time";
-import { RecipeContentAction } from "./recipe-content-action";
 import Link from "next/link";
+import { RecipeFavAction } from "./recipe-fav-action";
 
-export const RecipeCardSM = (props: RecipeCardProps) => {
+export const RecipeFavCardSM = (props: RecipeCardProps) => {
   const imgSrc = imgURL(`${props.id}/${props.image}`);
   return (
     <div className="flex border border-gray-100 hover:shadow-md rounded-xl gap-3">
@@ -32,8 +32,8 @@ export const RecipeCardSM = (props: RecipeCardProps) => {
         </div>
         <div>Published at: {dateFormat(props.createdAt, "ll")}</div>
       </Link>
-      <div className="self-end bottom-0x">
-        <RecipeContentAction recipeId={props.id} recipeName={props.title} />
+      <div className="self-end bottom-0">
+        <RecipeFavAction recipeId={props.id} />
       </div>
     </div>
   );

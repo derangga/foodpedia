@@ -36,7 +36,5 @@ export default async function Page({
     recipe,
   };
 
-  console.log(recipe);
-
   return <EditRecipe {...props} />;
 }

@@ -49,7 +49,7 @@ export const RecipeContentAction = ({
     <>
       <Dropdown>
         <DropdownTrigger>
-          <div className="rounded-md hover:bg-gray-100 hover:cursor-pointer mx-2 my-1">
+          <div className="rounded-md hover:bg-gray-100 hover:cursor-pointer py-0.5 px-1 mx-2 my-px">
             <Ellipsis size={16} />
           </div>
         </DropdownTrigger>
