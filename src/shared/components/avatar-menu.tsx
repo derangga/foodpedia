@@ -30,14 +30,12 @@ export const AvatarMenu = (props: AvatarMenyProps) => {
     }
   };
 
-  const avatar = () => {
-    return props.name.charAt(0).toUpperCase();
-  };
+  const avatar = props.name.charAt(0).toUpperCase();
   return (
     <Dropdown>
       <DropdownTrigger>
         <div className="flex justify-center items-center w-10 h-10 bg-black rounded-full hover:cursor-pointer">
-          <div className="text-white font-mono font-semibold">{avatar()}</div>
+          <div className="text-white font-mono font-semibold">{avatar}</div>
         </div>
       </DropdownTrigger>
       <DropdownMenu

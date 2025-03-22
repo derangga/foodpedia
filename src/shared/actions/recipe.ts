@@ -2,7 +2,11 @@ import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 
 export async function getRecipes() {
-  const result = await tryCatch(prisma.recipe.findMany());
+  const result = await tryCatch(
+    prisma.recipe.findMany({
+      where: { deletedAt: null },
+    })
+  );
   if (result.error) return [];
   return result.data;
 }
@@ -17,7 +21,7 @@ export async function getDetailRecipeAction(recipeId: number) {
         },
       },
       _count: {
-        select: { favorite: true },
+        select: { favorite: { where: { deletedAt: null } } },
       },
     },
   });
@@ -33,6 +37,14 @@ export async function getRecipeByUserIdAction(userId: string | undefined) {
       where: {
         userId: Number(userId),
         deletedAt: null,
+      },
+      select: {
+        id: true,
+        title: true,
+        image: true,
+        userId: true,
+        categories: true,
+        createdAt: true,
       },
     })
   );

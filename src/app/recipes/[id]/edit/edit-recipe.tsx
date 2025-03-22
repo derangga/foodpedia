@@ -16,20 +16,7 @@ import { AvatarMenu } from "@/shared/components/avatar-menu";
 import { useRouter } from "next/navigation";
 import { User } from "@/model/user";
 import { updateRecipeActions } from "./_actions/edit-recipe";
-
-export type RecipeDetail = {
-  id: number;
-  categories: string[];
-  title: string;
-  image: string | null;
-  userId: number;
-  ingredients: string[];
-  story: string | null;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
-};
+import { Recipe } from "@/model/recipe";
 
 export const EditRecipe = ({
   currentUser,
@@ -38,7 +25,7 @@ export const EditRecipe = ({
 }: {
   currentUser: User;
   categories: string[];
-  recipe: RecipeDetail;
+  recipe: Recipe;
 }) => {
   const router = useRouter();
   const headerRef = useRef<HTMLElement | null>(null);
