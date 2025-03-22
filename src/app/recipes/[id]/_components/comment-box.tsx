@@ -1,13 +1,32 @@
 "use client";
 import { Textarea, Button, Divider } from "@heroui/react";
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { commentRecipeAction } from "../_actions/comment";
 
-export const CommentBox = ({ className }: { className?: string }) => {
+export const CommentBox = ({
+  userId,
+  recipeId,
+  className,
+}: {
+  userId: number | undefined;
+  recipeId: number | undefined;
+  className?: string;
+}) => {
   const [comment, setComment] = useState("");
+  const [state, formAction, isLoading] = useActionState(
+    commentRecipeAction,
+    null
+  );
   return (
     <>
-      <form className={`flex flex-col items-end gap-3 ${className || ""}`}>
+      <form
+        className={`flex flex-col items-end gap-3 ${className || ""}`}
+        action={formAction}
+      >
+        <input name="userId" defaultValue={userId} className="hidden" />
+        <input name="recipeId" defaultValue={recipeId} className="hidden" />
         <Textarea
+          name="comment"
           placeholder="Give a warm comment"
           minRows={5}
           onValueChange={setComment}
@@ -25,6 +44,8 @@ export const CommentBox = ({ className }: { className?: string }) => {
               comment.length === 0 ? "bg-gray-200" : "bg-black"
             }`}
             radius="full"
+            isLoading={isLoading}
+            type="submit"
           >
             Respond
           </Button>

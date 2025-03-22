@@ -259,7 +259,7 @@ export const NewRecipe = ({
                   return (
                     <div
                       key={idx + 1}
-                      className="flex flex-row w-full h-fit justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
+                      className="flex flex-row w-full h-fit justify-between items-center space-x-3 p-2 rounded-lg border border-white hover:shadow-md hover:border-gray-100"
                     >
                       <div className="min-w-1 font-semibold">{`${
                         idx + 1

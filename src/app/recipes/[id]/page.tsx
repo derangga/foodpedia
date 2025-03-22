@@ -12,6 +12,7 @@ import { ImageClient } from "./_components/image-client";
 import { ContentAnchor } from "./_components/content-anchor";
 import { Recipe } from "@/model/recipe";
 import { isFavoritedAction } from "@/shared/actions/favorite";
+import { getCommentsAction } from "./_actions/comment";
 
 export default async function Page({
   params,
@@ -21,9 +22,11 @@ export default async function Page({
   const { id } = await params;
   const authStatus = await authenticationStatus();
   const recipe = await getDetailRecipeAction(Number(id));
-  const favorite = recipe?._count?.favorite;
+  const comments = await getCommentsAction(recipe?.id);
   const currentUser = await getUserById(authStatus.userId);
   const isFavorited = await isFavoritedAction(authStatus.userId, recipe?.id);
+  const favoriteCount = recipe?._count?.favorites;
+  const commentCount = recipe?._count.comments;
   const sanitizeDescription = DOMPurify.sanitize(recipe?.description || "");
   const imgSrc = imgURL(`${recipe?.id}/${recipe?.image}`);
 
@@ -48,7 +51,8 @@ export default async function Page({
           />
           <ContentAnchor
             isOwner={recipe?.userId === currentUser?.id}
-            favoriteCount={favorite}
+            favoriteCount={favoriteCount}
+            commentCount={commentCount}
             isFavorited={isFavorited}
             recipe={recipe as Recipe}
           />
@@ -87,9 +91,24 @@ export default async function Page({
         <section>
           <div className="font-poppins font-semibold text-2xl">Comments</div>
           {authStatus.isAuthenticate && recipe?.userId !== currentUser?.id && (
-            <CommentBox className="mt-4" />
+            <CommentBox
+              userId={currentUser?.id}
+              recipeId={recipe?.id}
+              className="mt-4"
+            />
           )}
-          <CommentItem className="mt-3" />
+          {comments.map((e, idx) => (
+            <CommentItem
+              key={idx + 1}
+              className="mt-3"
+              commentId={e.id}
+              recipeId={e.recipeId}
+              name={e.user.name}
+              comment={e.comment}
+              commentdAt={e.createdAt}
+              showMenu={currentUser?.id === e.userId}
+            />
+          ))}
         </section>
       </main>
     </>

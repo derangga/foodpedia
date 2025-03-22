@@ -21,7 +21,10 @@ export async function getDetailRecipeAction(recipeId: number) {
         },
       },
       _count: {
-        select: { favorite: { where: { deletedAt: null } } },
+        select: {
+          favorites: { where: { deletedAt: null } },
+          comments: { where: { deletedAt: null } },
+        },
       },
     },
   });

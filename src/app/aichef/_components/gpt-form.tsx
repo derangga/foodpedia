@@ -1,6 +1,6 @@
 "use client";
 import { Button, Textarea } from "@heroui/react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { askRecipedetail, askRecipeRecommendation } from "../_actions/ask-ai";
 import { ArrowUp } from "lucide-react";
 import { User } from "@/model/user";
@@ -23,11 +23,11 @@ export const GptForm = ({
   currentUser: User;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const promptRef = useRef<HTMLButtonElement | null>(null);
   const [chats, setChats] = useState<Array<ChatModel>>([]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const formData = new FormData(e.currentTarget);
     let tempChat = chats;
     tempChat.push({
@@ -50,6 +50,13 @@ export const GptForm = ({
     setChats(tempChat);
 
     setIsLoading(false);
+  };
+
+  const onEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == "Enter" && e.shiftKey == false) {
+      e.preventDefault();
+      promptRef.current?.click();
+    }
   };
 
   const askRecipe = async (recipeName: string) => {
@@ -118,8 +125,10 @@ export const GptForm = ({
             variant="underlined"
             minRows={2}
             color="warning"
+            onKeyDown={onEnterPress}
           ></Textarea>
           <Button
+            ref={promptRef}
             type="submit"
             isLoading={isLoading}
             color="warning"

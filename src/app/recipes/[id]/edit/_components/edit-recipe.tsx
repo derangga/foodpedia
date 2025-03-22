@@ -1,6 +1,6 @@
 "use client";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import TipTap from "../../_components/tiptap";
+import TipTap from "../../../_components/tiptap";
 import {
   addToast,
   Button,
@@ -15,7 +15,7 @@ import Link from "next/link";
 import { AvatarMenu } from "@/shared/components/avatar-menu";
 import { useRouter } from "next/navigation";
 import { User } from "@/model/user";
-import { updateRecipeActions } from "./_actions/edit-recipe";
+import { updateRecipeActions } from "../_actions/edit-recipe";
 import { Recipe } from "@/model/recipe";
 
 export const EditRecipe = ({
@@ -271,7 +271,7 @@ export const EditRecipe = ({
                   return (
                     <div
                       key={idx + 1}
-                      className="flex flex-row w-full h-fit justify-between space-x-3 p-2 rounded-lg hover:shadow-md hover:border hover:border-gray-100"
+                      className="flex flex-row w-full h-fit justify-between items-center space-x-3 p-2 rounded-lg border border-white hover:shadow-md hover:border-gray-100"
                     >
                       <div className="min-w-1 font-semibold">{`${
                         idx + 1
