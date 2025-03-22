@@ -11,7 +11,7 @@ import { RecipeFavCardSM } from "./_components/recipe-fav-card-sm";
 export default async function Page() {
   const authStatus = await authenticationStatus();
   if (!authStatus.isAuthenticate) {
-    redirect("/");
+    redirect("/auth");
   }
 
   const currentUser = await getUserById(authStatus.userId);

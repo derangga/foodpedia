@@ -48,12 +48,6 @@ export const AvatarMenu = (props: AvatarMenyProps) => {
             <div>Profile</div>
           </div>
         </DropdownItem>
-        <DropdownItem key="setting">
-          <div className="flex flex-row space-x-4 items-center">
-            <Settings size={20} />
-            <div>Settings</div>
-          </div>
-        </DropdownItem>
         <DropdownItem key="sign-out" className="text-danger" color="danger">
           <div className="flex flex-row space-x-4 items-center">
             <LogOut size={20} />

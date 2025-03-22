@@ -30,6 +30,7 @@ model user {
   recipes      recipe[]
   favorites    favorite[]
   ownedFavorites favorite[] @relation("recipeOwner")
+  comments      comment[]
   @@index([email])
 }
 
@@ -77,7 +78,8 @@ model recipe {
   updatedAt     DateTime?
   deletedAt     DateTime?
 
-  favorite    favorite[]
+  favorites    favorite[]
+  comments      comment[]
   @@index([title, userId, categories, createdAt])
 }
 
@@ -86,10 +88,23 @@ model favorite {
   userId          Int
   user            user      @relation(fields: [userId], references: [id])
   recipeOwnerId   Int
-  recipeOwner     user     @relation(fields: [recipeOwnerId], references: [id], name: "recipeOwner")
-  recipe          recipe @relation(fields: [recipeId], references: [id])
+  recipeOwner     user      @relation(fields: [recipeOwnerId], references: [id], name: "recipeOwner")
+  recipe          recipe    @relation(fields: [recipeId], references: [id])
   recipeId        Int
   createdAt       DateTime @default(now())
   deletedAt       DateTime?
   @@index([userId, recipeId, recipeOwnerId])
+}
+
+model comment {
+  id              Int @id @default(autoincrement())
+  userId          Int
+  user            user      @relation(fields: [userId], references: [id])
+  createdAt       DateTime  @default(now())
+  comment         String    @db.Text
+  recipe          recipe    @relation(fields: [recipeId], references: [id])
+  recipeId        Int
+  updatedAt       DateTime?
+  deletedAt       DateTime?
+  @@index([userId, recipeId])
 }

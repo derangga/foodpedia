@@ -60,6 +60,7 @@ export async function updateRecipeActions(
           categories: categories,
           ingredients: ingredients,
           description: sanitizeContent,
+          updatedAt: new Date(),
         }
       : {
           title,
@@ -68,6 +69,7 @@ export async function updateRecipeActions(
           ingredients: ingredients,
           description: sanitizeContent,
           image: image.name,
+          updatedAt: new Date(),
         };
 
   const recipe = await tryCatch(

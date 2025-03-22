@@ -8,6 +8,7 @@ export type ContentAnchorProps = {
   isOwner: boolean;
   isFavorited?: boolean;
   favoriteCount?: number;
+  commentCount?: number;
   recipe: Recipe;
 };
 export const ContentAnchor = (props: ContentAnchorProps) => {
@@ -32,10 +33,10 @@ export const ContentAnchor = (props: ContentAnchorProps) => {
           {props.favoriteCount || 0}
         </div>
       </div>
-      <div className="flex gap-2 items-center hover:cursor-pointer">
+      <div className="flex gap-2 items-center">
         <MessageCircle color="#6b7280" strokeWidth={2} size={22} />
         <div className="font-poppins text-gray-400 hover:text-gray-500 text-sm">
-          100
+          {props.commentCount || 0}
         </div>
       </div>
       <div className="grow" />

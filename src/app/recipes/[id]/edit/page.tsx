@@ -3,7 +3,7 @@ import { getUserById } from "@/shared/actions/get-user";
 import { redirect } from "next/navigation";
 import { getCategoriesAction } from "@/shared/actions/categories";
 import { getDetailRecipeAction } from "@/shared/actions/recipe";
-import { EditRecipe } from "./edit-recipe";
+import { EditRecipe } from "./_components/edit-recipe";
 import { User } from "@/model/user";
 
 export default async function Page({
@@ -15,12 +15,12 @@ export default async function Page({
 
   const authStatus = await authenticationStatus();
   if (!authStatus.isAuthenticate) {
-    redirect("/");
+    redirect("/auth");
   }
 
   const user = await getUserById(authStatus.userId);
   if (!user) {
-    redirect("/");
+    redirect("/auth");
   }
 
   const recipe = await getDetailRecipeAction(Number(id));

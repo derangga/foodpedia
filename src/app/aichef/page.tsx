@@ -7,13 +7,13 @@ import { User } from "@/model/user";
 export default async function Page() {
   const authStatus = await authenticationStatus();
   if (!authStatus.isAuthenticate) {
-    redirect("/");
+    redirect("/auth");
   }
 
   const user = await getUserById(authStatus.userId);
 
   if (!user) {
-    redirect("/");
+    redirect("/auth");
   }
 
   return <GptForm authStatus={authStatus} currentUser={user as User} />;
