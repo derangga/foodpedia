@@ -23,6 +23,7 @@ export type CommentProps = {
 };
 export const CommentItem = (props: CommentProps) => {
   const dateFormated = dateFormat(props.commentdAt);
+  const avatar = props.name.charAt(0).toUpperCase();
   const onMenuClicked = async (_: Key) => {
     const result = await deleteCommentAction(props.commentId, props.recipeId);
     if (!result) {
@@ -40,7 +41,7 @@ export const CommentItem = (props: CommentProps) => {
     >
       <div className="flex flex-row items-center gap-3">
         <div className="flex items-center justify-center h-8 w-8 bg-black rounded-full">
-          <div className="text-white">D</div>
+          <div className="text-white">{avatar}</div>
         </div>
         <div className="flex flex-col">
           <div className="font-poppins text-sm">{props.name}</div>
