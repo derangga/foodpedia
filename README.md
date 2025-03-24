@@ -1,3 +1,7 @@
+# Overview
+
+Foodpedia is a web app for sharing food recipe. The user can favorite and comment to the recipe. They can ask to AI too, to giving a suggestion food recipe based on ingredients. The design ispired to [flavoriz](https://www.figma.com/community/file/1388051873021664275)
+
 # Requirement
 
 - This project use bun, if you don't have bun installed on your local machine please install first by visiting this [page](https://bun.sh/)
