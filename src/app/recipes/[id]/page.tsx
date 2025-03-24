@@ -89,7 +89,9 @@ export default async function Page({
           <Divider className="my-8" />
         </section>
         <section>
-          <div className="font-poppins font-semibold text-2xl">Comments</div>
+          {comments.length > 0 && (
+            <div className="font-poppins font-semibold text-2xl">Comments</div>
+          )}
           {authStatus.isAuthenticate && recipe?.userId !== currentUser?.id && (
             <CommentBox
               userId={currentUser?.id}

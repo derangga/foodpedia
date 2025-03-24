@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AppHeader } from "@/shared/components/app-header";
 import { getRecipes } from "../shared/actions/recipe";
+import { Footer } from "@/shared/components/footer";
 
 export default async function Page() {
   const auth = await authenticationStatus();
@@ -134,7 +135,7 @@ export default async function Page() {
           </div>
         </section>
       </main>
-      <footer></footer>
+      <Footer />
     </>
   );
 }

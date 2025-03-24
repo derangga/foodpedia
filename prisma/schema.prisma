@@ -14,40 +14,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model User {
   id            Int @id @default(autoincrement())
   name          String
   email         String @unique
   password      String?
   avatar        String?
-  registerType  registerType @default(EMAIL)
-  role          role @default(USER)
+  registerType  RegisterType @default(EMAIL)
+  role          Role @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime?
   deletedAt     DateTime?
   
-  sessions     session[]
-  recipes      recipe[]
-  favorites    favorite[]
-  ownedFavorites favorite[] @relation("recipeOwner")
-  comments      comment[]
+  sessions     Session[]
+  recipes      Recipe[]
+  favorites    Favorite[]
+  ownedFavorites Favorite[] @relation("recipeOwner")
+  comments      Comment[]
   @@index([email])
 }
 
-enum role {
+enum Role {
   USER
   ADMIN
 }
 
-enum registerType {
+enum RegisterType {
   EMAIL
   GOOGLE
 }
 
-model session {
+model Session {
   id        Int @id @default(autoincrement())
   session   String @unique @default(cuid())
-  user      user   @relation(fields: [userId], references: [id])
+  user      User   @relation(fields: [userId], references: [id])
   userId    Int
   createdAt DateTime @default(now())
   expiresAt DateTime
@@ -55,7 +55,7 @@ model session {
   @@index([userId])
 }
 
-model category {
+model Category {
   id        Int @id @default(autoincrement())
   name      String @unique
   createdAt DateTime @default(now())
@@ -64,11 +64,11 @@ model category {
   @@index([name])
 }
 
-model recipe {
+model Recipe {
   id            Int @id @default(autoincrement())
   title         String
   image         String?
-  user          user   @relation(fields: [userId], references: [id])
+  user          User   @relation(fields: [userId], references: [id])
   userId        Int
   categories    String[]
   ingredients   String[]
@@ -78,31 +78,31 @@ model recipe {
   updatedAt     DateTime?
   deletedAt     DateTime?
 
-  favorites    favorite[]
-  comments      comment[]
+  favorites    Favorite[]
+  comments      Comment[]
   @@index([title, userId, categories, createdAt])
 }
 
-model favorite {
+model Favorite {
   id              Int @id @default(autoincrement())
   userId          Int
-  user            user      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
   recipeOwnerId   Int
-  recipeOwner     user      @relation(fields: [recipeOwnerId], references: [id], name: "recipeOwner")
-  recipe          recipe    @relation(fields: [recipeId], references: [id])
+  recipeOwner     User      @relation(fields: [recipeOwnerId], references: [id], name: "recipeOwner")
+  recipe          Recipe    @relation(fields: [recipeId], references: [id])
   recipeId        Int
   createdAt       DateTime @default(now())
   deletedAt       DateTime?
   @@index([userId, recipeId, recipeOwnerId])
 }
 
-model comment {
+model Comment {
   id              Int @id @default(autoincrement())
   userId          Int
-  user            user      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
   createdAt       DateTime  @default(now())
   comment         String    @db.Text
-  recipe          recipe    @relation(fields: [recipeId], references: [id])
+  recipe          Recipe    @relation(fields: [recipeId], references: [id])
   recipeId        Int
   updatedAt       DateTime?
   deletedAt       DateTime?

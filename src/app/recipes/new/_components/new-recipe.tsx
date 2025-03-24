@@ -141,7 +141,7 @@ export const NewRecipe = ({
   };
 
   return (
-    <div className="w-screen">
+    <div className="h-screen w-screen">
       <header
         ref={headerRef}
         className="flex flex-row justify-between sticky items-center top-0 w-full bg-white z-50 px-8 h-16 data-[scrolled]:shadow-md data-[scrolled]:bg-white transition-all"
