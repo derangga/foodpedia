@@ -34,57 +34,52 @@ export default async function Page() {
                   <span className="text-orange-400"> delicious</span>
                 </div>
                 <div className="font-poppins text-slate-200 mx-auto text-lg">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat
+                  Explore food recipe around the world and unleash your inner
+                  chef easy way with foodpedia
                 </div>
               </div>
             </div>
           </div>
         </section>
         <section>
-          <div className="flex flex-row w-full h-52 mt-6 space-x-5">
-            <div className="grow rounded-xl bg-slate-100">
-              <div className="grid grid-cols-3 gap-4 h-full">
-                <div className="xl:w-72 lg:w-44 flex flex-col p-3">
+          <div className="flex flex-row w-full h-52 mt-6 gap-6">
+            <div className="rounded-xl bg-slate-100">
+              <div className="grid grid-cols-3 h-full">
+                <div className="flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <CircleUserRound />
                   </div>
-                  <div className="font-bold mt-4">Fun Comunity</div>
+                  <div className="font-bold mt-4">User-centered</div>
                   <div className="mt-1 line-clamp-3">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
+                    Your feedback shapes our platform, ensuring a seamless and
+                    satisfying culinary journey
                   </div>
                 </div>
-                <div className="xl:w-72 lg:w-44 flex flex-col p-3">
+                <div className="flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Earth />
                   </div>
-                  <div className="font-bold mt-4">Fun Comunity</div>
+                  <div className="font-bold mt-4">Diverse Recipe</div>
                   <div className="mt-1 line-clamp-3">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
+                    We celebrate diverse culinary tranditions from around the
+                    world, inspiring you today.
                   </div>
                 </div>
-                <div className="xl:w-72 lg:w-44 flex flex-col p-3">
+                <div className="flex flex-col p-3">
                   <div className="p-2 w-fit rounded-full bg-white">
                     <Heart />
                   </div>
-                  <div className="font-bold mt-4">Fun Comunity</div>
+                  <div className="font-bold mt-4">Fun Community</div>
                   <div className="mt-1 line-clamp-3">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
+                    We foster a vibrant foodies community where joy comes with
+                    sharing recipe with us.
                   </div>
                 </div>
               </div>
             </div>
             <Link
-              href={"/ai-chef"}
-              className="w-48 flex flex-col rounded-xl border border-slate-100 bg-slate-50 shadow-lg"
+              href={"/aichef"}
+              className="w-72 flex flex-col rounded-xl border border-slate-100 bg-slate-50 shadow-md"
             >
               <div className="grow relative w-full rounded-t-xl overflow-hidden">
                 <Image
@@ -96,28 +91,11 @@ export default async function Page() {
                 />
               </div>
               <div className="flex flex-col justify-center h-10 px-3">
-                <div className="font-poppins font-semibold text-orange-400 text-lg hover:underline">
+                <div className="font-poppins font-semibold text-orange-400 hover:underline">
                   Talk with AI-Chef
                 </div>
               </div>
             </Link>
-            <div className="w-48 flex flex-col rounded-xl border border-slate-100 bg-slate-50 shadow-lg p-3">
-              <div className="font-poppins font-semibold text-orange-400 text-lg ">
-                FEATURED
-              </div>
-              <div className="flex flex-col grow justify-between mt-1">
-                <div className="font-poppins font-bold text-xl">
-                  Ranch Chicken and Rice
-                </div>
-                <div className=""></div>
-                <Link
-                  className="font-poppins text-sm underline font-semibold"
-                  href={"/recipe/id"}
-                >
-                  See recipe
-                </Link>
-              </div>
-            </div>
           </div>
         </section>
         <section>
