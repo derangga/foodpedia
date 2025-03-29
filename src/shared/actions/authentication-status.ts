@@ -1,6 +1,5 @@
 "use server";
 import { AuthStatus } from "@/model/auth-status";
-import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
@@ -16,20 +15,6 @@ export async function authenticationStatus(): Promise<AuthStatus> {
   const userId = cookie?.get("user_id");
   if (!sessionId || sessionId.value === "") return { isAuthenticate: false };
   if (!userId || userId.value === "") return { isAuthenticate: false };
-
-  const session = await prisma.session.findUnique({
-    where: {
-      session: sessionId.value,
-      deletedAt: null,
-    },
-  });
-
-  if (!session) {
-    return { isAuthenticate: false };
-  }
-
-  const now = new Date();
-  if (session.expiresAt < now) return { isAuthenticate: false };
 
   return {
     isAuthenticate: true,

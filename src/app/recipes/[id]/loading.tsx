@@ -2,7 +2,7 @@ import { Skeleton } from "@heroui/react";
 
 export default function Loading() {
   return (
-    <div className="max-w-3xl m-auto pt-16 flex flex-col">
+    <div className="max-w-3xl m-auto py-16 flex flex-col">
       <Skeleton className="w-full h-96 rounded-xl">
         <div className="bg-default-200" />
       </Skeleton>

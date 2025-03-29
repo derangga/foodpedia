@@ -8,16 +8,17 @@ import { useEffect, useRef } from "react";
 import { Input, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { AuthStatus } from "@/model/auth-status";
+import { useUserData } from "@/hooks/use-local-storage";
 
 export type AppHeaderProps = {
   auth: AuthStatus;
-  avatarName: string;
 };
 export const AppHeader = (props: AppHeaderProps) => {
   const ref = useRef<HTMLElement | null>(null);
+  const user = useUserData();
   const router = useRouter();
   const isLogin = props.auth.isAuthenticate;
-  const name = props.avatarName;
+  const name = user?.name || "";
   useEffect(() => {
     if (!ref.current) return;
     const header = ref.current;

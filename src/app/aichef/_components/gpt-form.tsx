@@ -3,7 +3,6 @@ import { Button, Textarea } from "@heroui/react";
 import { FormEvent, useRef, useState } from "react";
 import { askRecipedetail, askRecipeRecommendation } from "../_actions/ask-ai";
 import { ArrowUp } from "lucide-react";
-import { User } from "@/model/user";
 import { GptRecipeGuide, GptRecipeSuggestions } from "@/model/gpt";
 import { ChatBubble } from "./chat-bubble";
 import { AppHeader } from "@/shared/components/app-header";
@@ -15,13 +14,7 @@ type ChatModel = {
   message: string | GptRecipeSuggestions | GptRecipeGuide | null;
 };
 
-export const GptForm = ({
-  authStatus,
-  currentUser,
-}: {
-  authStatus: AuthStatus;
-  currentUser: User;
-}) => {
+export const GptForm = ({ authStatus }: { authStatus: AuthStatus }) => {
   const [isLoading, setIsLoading] = useState(false);
   const promptRef = useRef<HTMLButtonElement | null>(null);
   const [chats, setChats] = useState<Array<ChatModel>>([]);
@@ -106,7 +99,7 @@ export const GptForm = ({
 
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} />
       <main className="grow py-8 px-3 flex flex-col w-1/2 mx-auto gap-10 overflow-scroll scrollbar-hide">
         {chats.length === 0 ? (
           <div className="my-14"></div>

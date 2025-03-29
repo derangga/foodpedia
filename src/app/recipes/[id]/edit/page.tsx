@@ -14,14 +14,8 @@ export default async function Page({
   const { id } = await params;
 
   const authStatus = await authenticationStatus();
-  if (!authStatus.isAuthenticate) {
-    redirect("/auth");
-  }
 
   const user = await getUserById(authStatus.userId);
-  if (!user) {
-    redirect("/auth");
-  }
 
   const recipe = await getDetailRecipeAction(Number(id));
 

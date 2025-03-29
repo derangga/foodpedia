@@ -22,9 +22,12 @@ export default async function Page({
   const { id } = await params;
   const authStatus = await authenticationStatus();
   const recipe = await getDetailRecipeAction(Number(id));
-  const comments = await getCommentsAction(recipe?.id);
-  const currentUser = await getUserById(authStatus.userId);
-  const isFavorited = await isFavoritedAction(authStatus.userId, recipe?.id);
+  const [currentUser, isFavorited, comments] = await Promise.all([
+    getUserById(authStatus.userId),
+    isFavoritedAction(authStatus.userId, recipe?.id),
+    getCommentsAction(recipe?.id),
+  ]);
+
   const favoriteCount = recipe?._count?.favorites;
   const commentCount = recipe?._count.comments;
   const sanitizeDescription = DOMPurify.sanitize(recipe?.description || "");
@@ -32,7 +35,7 @@ export default async function Page({
 
   return (
     <>
-      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} />
       <main className="max-w-3xl m-auto p-8 gap-8">
         <section className="relative rounded-xl w-full h-96 overflow-hidden my-8">
           {/* Due to issue render on SSR use client side instead */}
