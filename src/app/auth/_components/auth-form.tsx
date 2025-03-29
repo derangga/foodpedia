@@ -18,6 +18,7 @@ import {
   loginGoogleAction,
   registerAction,
 } from "../_actions/authenticate";
+import { storeUserData } from "@/utils/user-storage";
 
 export const AuthForm = () => {
   const searchParams = useSearchParams();
@@ -30,7 +31,7 @@ export const AuthForm = () => {
     loginAction,
     null
   );
-  const [googleState, googleFormAction, isGoogleLoading] = useActionState(
+  const [_, googleFormAction, isGoogleLoading] = useActionState(
     loginGoogleAction,
     null
   );
@@ -80,7 +81,8 @@ export const AuthForm = () => {
   };
 
   useEffect(() => {
-    if (loginState?.success) {
+    if (loginState?.success && loginState?.user) {
+      storeUserData(loginState.user);
       redirect("/");
     } else if (!loginState?.success && loginState?.message) {
       addToast({

@@ -3,9 +3,5 @@ export type User = {
   id: number;
   email: string;
   avatar: string | null;
-  registerType: string;
-  role: string;
   createdAt: Date;
-  updatedAt: Date | null;
-  deletedAt: Date | null;
 };

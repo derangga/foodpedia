@@ -1,5 +1,4 @@
 import { authenticationStatus } from "@/shared/actions/authentication-status";
-import { getUserById } from "@/shared/actions/get-user";
 import { AppHeader } from "@/shared/components/app-header";
 import Image from "next/image";
 import { getRecipes } from "../../shared/actions/recipe";
@@ -8,11 +7,10 @@ import Link from "next/link";
 
 export default async function Page() {
   const authStatus = await authenticationStatus();
-  const currentUser = await getUserById(authStatus.userId);
   const recipes = await getRecipes();
   return (
     <>
-      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
           <div className="relative w-full rounded-3xl h-96 overflow-hidden">

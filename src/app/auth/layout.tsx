@@ -1,5 +1,3 @@
-import { Footer } from "@/shared/components/footer";
-
 export default function Layout({
   children,
 }: Readonly<{
@@ -8,7 +6,6 @@ export default function Layout({
   return (
     <div className="flex flex-col h-screen">
       <div className="grow">{children}</div>
-      <Footer />
     </div>
   );
 }

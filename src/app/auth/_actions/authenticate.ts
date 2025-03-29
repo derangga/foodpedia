@@ -8,13 +8,14 @@ import { cookies } from "next/headers";
 import * as arctic from "arctic";
 import { googleClient } from "@/libs/google/google-client";
 import { redirect } from "next/navigation";
+import { User } from "@/model/user";
 
 export async function loginAction(_: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const response = (success: boolean, message: string) => {
-    return { success, message };
+  const response = (success: boolean, message: string, user?: User) => {
+    return { success, message, user };
   };
   const user = await getUserByEmailAction(email);
 
@@ -29,7 +30,13 @@ export async function loginAction(_: any, formData: FormData) {
 
   await provideSessionAction(user.id);
 
-  return response(true, "");
+  return response(true, "", {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+    createdAt: user.createdAt,
+  });
 }
 
 export async function loginGoogleAction(_: any, formData: FormData) {

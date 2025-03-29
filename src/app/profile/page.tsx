@@ -21,7 +21,7 @@ export default async function Page() {
 
   return (
     <div>
-      <AppHeader auth={authStatus} avatarName={currentUser?.name || ""} />
+      <AppHeader auth={authStatus} />
       <main className="w-2/3 mx-auto py-20 flex flex-col">
         <div className="flex flex-row gap-16 items-center">
           <div className="flex justify-center items-center size-24 bg-black rounded-full text-white font-poppins text-3xl font-bold">
