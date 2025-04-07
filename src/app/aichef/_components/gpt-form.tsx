@@ -99,7 +99,7 @@ export const GptForm = ({ authStatus }: { authStatus: AuthStatus }) => {
 
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader auth={authStatus} />
+      <AppHeader authStatus={authStatus} />
       <main className="grow py-8 px-3 flex flex-col w-1/2 mx-auto gap-10 overflow-scroll scrollbar-hide">
         {chats.length === 0 ? (
           <div className="my-14"></div>

@@ -7,17 +7,14 @@ import { AvatarMenu } from "./avatar-menu";
 import { useEffect, useRef } from "react";
 import { Input, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { AuthStatus } from "@/model/auth-status";
 import { useUserData } from "@/hooks/use-local-storage";
+import { AuthStatus } from "@/model/auth-status";
 
-export type AppHeaderProps = {
-  auth: AuthStatus;
-};
-export const AppHeader = (props: AppHeaderProps) => {
+export const AppHeader = ({ authStatus }: { authStatus: AuthStatus }) => {
   const ref = useRef<HTMLElement | null>(null);
   const user = useUserData();
   const router = useRouter();
-  const isLogin = props.auth.isAuthenticate;
+  const isLogin = authStatus.isAuthenticate;
   const name = user?.name || "";
   useEffect(() => {
     if (!ref.current) return;

@@ -1,4 +1,4 @@
-import { authenticationStatus } from "@/shared/actions/authentication-status";
+import { authStatus } from "@/utils/auth-status";
 import { AppHeader } from "@/shared/components/app-header";
 import Image from "next/image";
 import { getRecipes } from "../../shared/actions/recipe";
@@ -6,11 +6,11 @@ import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
 import Link from "next/link";
 
 export default async function Page() {
-  const authStatus = await authenticationStatus();
+  const auth = await authStatus();
   const recipes = await getRecipes();
   return (
     <>
-      <AppHeader auth={authStatus} />
+      <AppHeader authStatus={auth} />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
           <div className="relative w-full rounded-3xl h-96 overflow-hidden">

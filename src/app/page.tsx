@@ -1,4 +1,4 @@
-import { authenticationStatus } from "@/shared/actions/authentication-status";
+import { authStatus } from "@/utils/auth-status";
 import { RecipeCardLG } from "@/shared/components/recipe-card-lg";
 import { CircleUserRound, Earth, Heart } from "lucide-react";
 import Image from "next/image";
@@ -8,13 +8,13 @@ import { getRecipes } from "../shared/actions/recipe";
 import { Footer } from "@/shared/components/footer";
 
 export default async function Page() {
-  const auth = await authenticationStatus();
+  const auth = await authStatus();
 
   // TODO: replace with top 5 recipe favorite
   const recipes = await getRecipes();
   return (
     <>
-      <AppHeader auth={auth} />
+      <AppHeader authStatus={auth} />
       <main className="flex flex-col w-screen py-6 px-8">
         <section>
           <div className="relative w-full rounded-3xl h-[30rem] overflow-hidden">

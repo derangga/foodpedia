@@ -1,15 +1,18 @@
 "use client";
+import { getUserAction } from "@/shared/actions/get-user";
+import { storeUserData } from "@/utils/user-storage";
 import { Progress } from "@heroui/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const LoadingBar = ({ token }: { token: string }) => {
+  const route = useRouter();
   useEffect(() => {
     if (!token) return;
 
     const requestSession = async () => {
       try {
-        const response = await fetch("/api/auth/session", {
+        const response = await fetch("/api/oauth/session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -17,11 +20,15 @@ export const LoadingBar = ({ token }: { token: string }) => {
           },
         });
 
-        const route = response.ok ? "/" : "/auth";
-        redirect(route);
+        const user = await getUserAction();
+        if (user) {
+          storeUserData(user);
+        }
+        const path = response.ok ? "/" : "/auth";
+        route.replace(path);
       } catch (error) {
         console.error("[ERROR] failed generate session");
-        redirect("/auth");
+        route.replace("/auth");
       }
     };
     requestSession();

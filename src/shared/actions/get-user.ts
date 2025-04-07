@@ -3,7 +3,7 @@ import { prisma } from "@/libs/postgres";
 import { tryCatch } from "@/utils/try-catch";
 import { cookies } from "next/headers";
 
-export async function getUserById(userId: string | undefined) {
+export async function getUserById(userId: number) {
   if (!userId) return null;
 
   const user = await prisma.user.findUnique({
@@ -29,8 +29,12 @@ export async function getUserAction() {
 
   const userId = nextCookie.data?.get("user_id")?.value || "";
   const user = await prisma.user.findUnique({
-    omit: {
-      password: true,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      createdAt: true,
     },
     where: { id: Number(userId) },
   });

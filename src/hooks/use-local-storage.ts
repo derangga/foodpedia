@@ -1,6 +1,6 @@
 import { User } from "@/model/user";
 import { getUserData } from "@/utils/user-storage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export function useUserData() {
   const [user, setUser] = useState<User | null>();
