@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
+import { JWTPayload } from "jose";
 
-export interface CustomJwtPayload extends jwt.JwtPayload {
-  uid: string;
+export interface AuthJwtPayload extends JWTPayload {
+  grant_type: string;
 }

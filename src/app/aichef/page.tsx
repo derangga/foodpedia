@@ -1,8 +1,8 @@
-import { authenticationStatus } from "@/shared/actions/authentication-status";
+import { authStatus } from "@/utils/auth-status";
 import { GptForm } from "./_components/gpt-form";
 
 export default async function Page() {
-  const authStatus = await authenticationStatus();
+  const auth = await authStatus();
 
-  return <GptForm authStatus={authStatus} />;
+  return <GptForm authStatus={auth} />;
 }

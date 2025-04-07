@@ -2,7 +2,6 @@
 
 import { prisma } from "@/libs/postgres";
 import { uploadImage } from "@/libs/s3";
-import { getUserAction } from "@/shared/actions/get-user";
 import { tryCatch } from "@/utils/try-catch";
 import DOMPurify from "isomorphic-dompurify";
 
@@ -46,11 +45,6 @@ export async function updateRecipeActions(
   }
 
   const sanitizeContent = DOMPurify.sanitize(content);
-
-  const user = await getUserAction();
-  if (!user) {
-    return { error: "failet get user data" };
-  }
 
   const data =
     image.size === 0

@@ -82,7 +82,7 @@ export async function unfavoriteAction(recipeId: number) {
 }
 
 export async function isFavoritedAction(
-  userId: string | undefined,
+  userId: number,
   recipeId: number | undefined
 ) {
   if (!userId || !recipeId) return false;
@@ -94,7 +94,7 @@ export async function isFavoritedAction(
   return result && !result.deletedAt ? true : false;
 }
 
-export async function getFavoriteByUserIdAction(userId: string | undefined) {
+export async function getFavoriteByUserIdAction(userId: number) {
   if (!userId) return [];
   const recipeIds = await prisma.favorite.findMany({
     where: { userId: Number(userId), deletedAt: null },

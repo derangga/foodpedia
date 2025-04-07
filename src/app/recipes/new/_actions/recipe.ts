@@ -49,7 +49,7 @@ export async function createRecipeActions(
 
   const user = await getUserAction();
   if (!user) {
-    return { error: "failet get user data" };
+    return { error: "failed get user data" };
   }
 
   const recipe = await tryCatch(

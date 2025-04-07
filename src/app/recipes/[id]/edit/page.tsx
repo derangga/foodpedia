@@ -1,4 +1,4 @@
-import { authenticationStatus } from "@/shared/actions/authentication-status";
+import { authStatus } from "@/utils/auth-status";
 import { getUserById } from "@/shared/actions/get-user";
 import { redirect } from "next/navigation";
 import { getCategoriesAction } from "@/shared/actions/categories";
@@ -13,9 +13,9 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  const authStatus = await authenticationStatus();
+  const auth = await authStatus();
 
-  const user = await getUserById(authStatus.userId);
+  const user = await getUserById(auth.userId);
 
   const recipe = await getDetailRecipeAction(Number(id));
 

@@ -1,6 +1,6 @@
 import { getUserById } from "@/shared/actions/get-user";
 import { getDetailRecipeAction } from "../../../shared/actions/recipe";
-import { authenticationStatus } from "@/shared/actions/authentication-status";
+import { authStatus } from "@/utils/auth-status";
 import { AppHeader } from "@/shared/components/app-header";
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import DOMPurify from "isomorphic-dompurify";
@@ -20,11 +20,11 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const authStatus = await authenticationStatus();
+  const auth = await authStatus();
   const recipe = await getDetailRecipeAction(Number(id));
   const [currentUser, isFavorited, comments] = await Promise.all([
-    getUserById(authStatus.userId),
-    isFavoritedAction(authStatus.userId, recipe?.id),
+    getUserById(auth.userId),
+    isFavoritedAction(auth.userId, recipe?.id),
     getCommentsAction(recipe?.id),
   ]);
 
@@ -35,7 +35,7 @@ export default async function Page({
 
   return (
     <>
-      <AppHeader auth={authStatus} />
+      <AppHeader authStatus={auth} />
       <main className="max-w-3xl m-auto p-8 gap-8">
         <section className="relative rounded-xl w-full h-96 overflow-hidden my-8">
           {/* Due to issue render on SSR use client side instead */}
@@ -95,7 +95,7 @@ export default async function Page({
           {comments.length > 0 && (
             <div className="font-poppins font-semibold text-2xl">Comments</div>
           )}
-          {authStatus.isAuthenticate && recipe?.userId !== currentUser?.id && (
+          {auth.isAuthenticate && recipe?.userId !== currentUser?.id && (
             <CommentBox
               userId={currentUser?.id}
               recipeId={recipe?.id}

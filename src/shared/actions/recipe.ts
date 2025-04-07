@@ -32,7 +32,7 @@ export async function getDetailRecipeAction(recipeId: number) {
   return recipe;
 }
 
-export async function getRecipeByUserIdAction(userId: string | undefined) {
+export async function getRecipeByUserIdAction(userId: number) {
   if (!userId) return [];
 
   const recipes = await tryCatch(

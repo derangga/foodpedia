@@ -3,9 +3,9 @@
 import { prisma } from "@/libs/postgres";
 import { googleClient } from "@/libs/google/google-client";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { QueryParams } from "@/shared/params";
 import { GoogleUserInfo } from "@/libs/google/user";
+import { joseBuildAndSign } from "@/utils/jwt";
 
 export async function validateGoogleAuth(params: QueryParams) {
   try {
@@ -37,15 +37,14 @@ export async function appAuthFlow(googleAccount: GoogleUserInfo) {
   const user = await prisma.user.findUnique({
     where: { email: googleAccount.email },
   });
-  const secret = process.env.JWT_SECRET || "";
+  const jwtSignature = process.env.JWT_AUTH || "";
   if (user) {
-    const token = jwt.sign(
-      {
-        uid: user.id,
-      },
-      secret,
-      { expiresIn: 3 * 60 }
-    );
+    const token = await joseBuildAndSign({
+      grantType: "oauth",
+      expiration: "3m",
+      userId: user.id,
+      jwtSignature,
+    });
     return { token, authType: "login" };
   } else {
     return { authType: "register" };
@@ -76,14 +75,18 @@ export async function registerGoogleAction(googleAccount: GoogleUserInfo) {
     return response(false, "failed register user");
   }
 
-  const secret = process.env.JWT_SECRET || "";
-  const token = jwt.sign(
-    {
-      uid: user.id,
-    },
-    secret,
-    { expiresIn: 3 * 60 }
-  );
+  const jwtSignature = process.env.JWT_AUTH || "";
+
+  const token = await joseBuildAndSign({
+    grantType: "oauth",
+    expiration: "3m",
+    userId: user.id,
+    jwtSignature,
+  });
+
+  if (!token) {
+    return response(false, "failed create session");
+  }
 
   return response(true, "", token);
 }
