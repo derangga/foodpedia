@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { Input } from "../input";
 
 interface InputIngredientsProps {
   onItemsChange?: (ingredients: string[]) => void;
@@ -27,7 +28,7 @@ const InputIngredients: React.FC<InputIngredientsProps> = ({
   };
   return (
     <>
-      <input
+      <Input
         type="text"
         value={currentIngredient}
         onChange={(e) => setCurrentIngredient(e.target.value)}

@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import InputIngredients from "@/components/ui/recipes/input-ingredients";
 import { toast } from "sonner";
+import { createNewRecipe } from "@/actions/create-recipe";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import LoadingDialog from "@/components/ui/loading-dialog";
 
 const CATEGORIES = [
   "Desserts",
@@ -24,11 +28,13 @@ const CATEGORIES = [
 
 const NewRecipe: React.FC = () => {
   const maxImgSize = 500 * 1000; // max 500kb
+  const router = useRouter();
   const ingredients = useRef<string[]>([]);
   const categories = useRef<string[]>([]);
   const contentGuide = useRef<string>("");
   const fileImage = useRef<File | undefined>(undefined);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     fileImage.current = e.target.files?.[0];
@@ -62,10 +68,30 @@ const NewRecipe: React.FC = () => {
       return;
     }
 
+    if (!contentGuide.current) {
+      toast.error("Failed create recipe", {
+        description: "You must provide how to cook",
+        duration: 2000,
+      });
+      return;
+    }
+
     formData.append("image", fileImage.current);
-    formData.append("categories", JSON.stringify(categories));
-    formData.append("ingredients", JSON.stringify(ingredients));
+    formData.append("categories", JSON.stringify(categories.current));
+    formData.append("ingredients", JSON.stringify(ingredients.current));
     formData.append("guide", contentGuide.current);
+
+    setLoading(true);
+    const result = await createNewRecipe(formData);
+    setLoading(false);
+    if (result instanceof Error) {
+      toast.error("Failed create recipe", {
+        description: result.message,
+        duration: 2000,
+      });
+    } else {
+      router.push(`/recipes/${result}`);
+    }
   };
 
   return (
@@ -196,14 +222,15 @@ const NewRecipe: React.FC = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
           >
             Create Recipe
-          </button>
+          </Button>
         </div>
       </form>
+      <LoadingDialog show={isLoading} />
     </div>
   );
 };

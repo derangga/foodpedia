@@ -7,6 +7,9 @@ import {
   Underline as UnderlineIcon,
   List,
   ListOrdered,
+  Heading1,
+  Heading2,
+  Heading3,
 } from "lucide-react";
 
 interface TipTapToolbarProps {
@@ -16,6 +19,39 @@ interface TipTapToolbarProps {
 const TipTapToolbar: React.FC<TipTapToolbarProps> = ({ editor }) => {
   return (
     <div className="bg-gray-50 p-2 border-b border-gray-300 flex gap-2">
+      <button
+        type="button"
+        onClick={() =>
+          editor?.chain().focus().toggleHeading({ level: 1 }).run()
+        }
+        className={`p-2 rounded hover:bg-gray-200 ${
+          editor?.isActive("heading", { level: 1 }) ? "bg-gray-200" : ""
+        }`}
+      >
+        <Heading1 className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          editor?.chain().focus().toggleHeading({ level: 2 }).run()
+        }
+        className={`p-2 rounded hover:bg-gray-200 ${
+          editor?.isActive("heading", { level: 2 }) ? "bg-gray-200" : ""
+        }`}
+      >
+        <Heading2 className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          editor?.chain().focus().toggleHeading({ level: 3 }).run()
+        }
+        className={`p-2 rounded hover:bg-gray-200 ${
+          editor?.isActive("heading", { level: 3 }) ? "bg-gray-200" : ""
+        }`}
+      >
+        <Heading3 className="h-4 w-4" />
+      </button>
       <button
         type="button"
         onClick={() => editor?.chain().focus().toggleBold().run()}
