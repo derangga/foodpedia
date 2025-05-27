@@ -1,5 +1,13 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, serial } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  index,
+  text,
+  integer,
+  timestamp,
+  boolean,
+  serial,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -62,23 +70,81 @@ export const verification = pgTable("verification", {
   ),
 });
 
-export const recipes = pgTable("recipes", {
+export const category = pgTable("category", {
   id: serial("id").primaryKey(),
-  title: text("text").notNull(),
-  image: text("image"),
-  authorId: text("author_id"),
-  categories: text("categories").array().notNull(),
-  ingredients: text("ingredients").array().notNull(),
-  story: text("story"),
-  guide: text("guide").notNull(),
+  name: text("text").notNull().unique(),
   createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
     () => /* @__PURE__ */ new Date()
   ),
   deletedAt: timestamp("deleted_at"),
 });
+
+export const recipes = pgTable(
+  "recipes",
+  {
+    id: serial("id").primaryKey(),
+    title: text("text").notNull(),
+    image: text("image"),
+    authorId: text("author_id").notNull(),
+    categories: text("categories").array().notNull(),
+    ingredients: text("ingredients").array().notNull(),
+    story: text("story"),
+    guide: text("guide").notNull(),
+    createdAt: timestamp("created_at").$defaultFn(
+      () => /* @__PURE__ */ new Date()
+    ),
+    updatedAt: timestamp("updated_at").$defaultFn(
+      () => /* @__PURE__ */ new Date()
+    ),
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [
+    index("recipe_title_idx").on(table.title),
+    index("recipe_categories_idx").on(table.categories),
+    index("recipe_author_id_idx").on(table.authorId),
+  ]
+);
+
+export const favorites = pgTable(
+  "favorite",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id),
+    recipeOwnerId: text("recipe_owner_id")
+      .notNull()
+      .references(() => user.id),
+    recipeId: integer("recipe_id")
+      .notNull()
+      .references(() => recipes.id),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [
+    index("favorite_user_id").on(table.userId),
+    index("favorite_recipe_owner_id").on(table.recipeOwnerId),
+    index("favorite_recipe_id").on(table.recipeId),
+  ]
+);
+
+export const comments = pgTable(
+  "comment",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id),
+    recipeId: integer("recipe_id")
+      .notNull()
+      .references(() => recipes.id),
+    comment: text("comment").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at"),
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [index("comment_recipe_id").on(table.recipeId)]
+);
 
 export const usersRelations = relations(user, ({ many }) => ({
   recipes: many(recipes),
