@@ -1,12 +1,29 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Menu, ChefHat, LogIn, X } from "lucide-react";
+import {
+  Menu,
+  ChefHat,
+  LogIn,
+  X,
+  FilePlus,
+  CircleUserRound,
+  LogOut,
+} from "lucide-react";
 import { Button } from "../button";
 import authClient from "@/lib/auth-client";
 import { User } from "better-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../dropdown-menu";
+import { useRouter } from "next/navigation";
 
 interface SessionProps {
   user?: User;
@@ -15,6 +32,7 @@ interface SessionProps {
 const Navbar: React.FC<SessionProps> = ({ user }) => {
   const headerRef = useRef<HTMLElement | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!headerRef.current) return;
@@ -41,6 +59,16 @@ const Navbar: React.FC<SessionProps> = ({ user }) => {
     });
   };
 
+  const signOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.refresh();
+        },
+      },
+    });
+  };
+
   const fallbackAvatar = user?.name.charAt(0);
 
   return (
@@ -62,12 +90,38 @@ const Navbar: React.FC<SessionProps> = ({ user }) => {
             <NavLink icon={null} label="Recipes" route="/recipes" />
             <NavLink icon={null} label="ChefAI" route="/chefai" />
             {user ? (
-              <Avatar>
-                <AvatarImage src={""} />
-                <AvatarFallback className="rounded-full bg-gray-200 hover:bg-gray-700 hover:text-white">
-                  {fallbackAvatar}
-                </AvatarFallback>
-              </Avatar>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar>
+                    <AvatarImage src={""} />
+                    <AvatarFallback className="rounded-full bg-gray-200 hover:bg-gray-700 hover:text-white">
+                      {fallbackAvatar}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/recipes/new")}
+                    >
+                      <FilePlus />
+                      Create Recipe
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/profiles")}>
+                      <CircleUserRound />
+                      Profile
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="focus:bg-red-200 focus:text-red-600"
+                    onClick={() => signOut()}
+                  >
+                    <LogOut />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 className="rounded-full bg-orange-500 text-white font-medium transition-all hover:bg-orange-600 hover:cursor-pointer"
