@@ -108,7 +108,7 @@ const Navbar: React.FC<SessionProps> = ({ user }) => {
                 signIn();
               }}
             >
-              <LogIn className="h-5 w-5" /> Sign in
+              <LogIn /> Sign in
             </Button>
           </div>
         </div>
