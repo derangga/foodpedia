@@ -7,6 +7,7 @@ import {
   timestamp,
   boolean,
   serial,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -144,6 +145,29 @@ export const comments = pgTable(
     deletedAt: timestamp("deleted_at"),
   },
   (table) => [index("comment_recipe_id").on(table.recipeId)]
+);
+
+export const gptSession = pgTable("gpt_session", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id),
+  title: text("title").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+});
+
+export const gptMessage = pgTable(
+  "gpt_message",
+  {
+    sessionId: uuid("session_id")
+      .notNull()
+      .references(() => gptSession.id),
+    senderId: text("sender_id").notNull().default("gpt"),
+    message: text("message").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [index("gpt_message_session_id").on(table.sessionId)]
 );
 
 export const usersRelations = relations(user, ({ many }) => ({

@@ -1,7 +1,7 @@
 "use client";
 import PopoverFilter from "@/components/ui/recipes/popover-filter";
 import RecipeCard from "@/components/ui/recipes/recipes-card";
-import Recipe from "@/models/recipe";
+import { Recipe } from "@/models/recipe";
 import { Search } from "lucide-react";
 import { useState } from "react";
 

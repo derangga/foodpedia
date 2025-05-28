@@ -6,46 +6,24 @@ import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import TypingMarkdownMessage from "@/components/ui/chefai/typing-markdown-message";
 import { Button } from "@/components/ui/button";
+import { askRecipePromptGpt, promptGpt } from "@/actions/gpt";
+import { GptRecipeSuggestions } from "@/models/gpt";
+import { SuggestRecipeItem } from "@/components/ui/chefai/suggest-recipe-item";
 
 interface Message {
   id: string;
-  content: string;
+  answerType?: string;
+  language?: string;
+  content: string | GptRecipeSuggestions[];
   role: "user" | "assistant";
-  timestamp: Date;
   isTyping?: boolean;
+  timestamp: Date;
 }
 
 export default function ChefAiPage() {
-  const dummyResponse = `Here's a recipe suggestion for you:
-
-## Classic Spaghetti Carbonara 🍝
-
-### Ingredients:
-* 400g spaghetti
-* 200g pancetta or guanciale
-* 4 large eggs
-* 100g Pecorino Romano
-* 100g Parmigiano Reggiano
-* Black pepper to taste
-
-### Instructions:
-1. Bring a large pot of salted water to boil
-2. Cook pasta according to package instructions
-3. Meanwhile, crisp the pancetta in a large pan
-4. Mix eggs and cheese in a bowl
-5. Combine everything while pasta is hot
-
-### Tips:
-> Make sure to work quickly when combining the eggs to avoid scrambling!
-
-**Preparation Time:** 20 minutes
-**Servings:** 4 people
-
-*Enjoy your homemade carbonara!* ✨`;
-
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -72,21 +50,60 @@ export default function ChefAiPage() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsTyping(true);
+
+    setLoading(true);
+
+    const result = await promptGpt(input);
+    setLoading(false);
+    if (!result) return;
 
     // Simulate AI response delay
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: dummyResponse,
-        role: "assistant",
-        timestamp: new Date(),
-        isTyping: true,
-      };
+    const aiMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      content: result.answer,
+      answerType: result.answer_type,
+      language: result.language_use,
+      role: "assistant",
+      timestamp: new Date(),
+      isTyping: result.answer_type === "recipe_food",
+    };
 
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1000);
+    setMessages((prev) => [...prev, aiMessage]);
+  };
+
+  const handleAskRecipe = async (recipeName: string) => {
+    if (!recipeName.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content: recipeName,
+      role: "user",
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+
+    setLoading(true);
+    const message = messages.find((msg) => typeof msg.language === "string");
+    const result = await askRecipePromptGpt(
+      message?.language || "english",
+      recipeName
+    );
+    setLoading(false);
+    if (!result) return;
+
+    // Simulate AI response delay
+    const aiMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      content: result.answer,
+      answerType: result.answer_type,
+      language: result.language_use,
+      role: "assistant",
+      timestamp: new Date(),
+      isTyping: result.answer_type === "recipe_food",
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
   };
 
   const handleTypingComplete = (messageId: string) => {
@@ -131,23 +148,35 @@ export default function ChefAiPage() {
                   {message.role === "assistant" ? (
                     message.isTyping ? (
                       <TypingMarkdownMessage
-                        content={message.content}
+                        content={message.content as string}
                         messageId={message.id}
                         onComplete={() => handleTypingComplete(message.id)}
                       />
-                    ) : (
+                    ) : message.answerType === "recipe_food" ? (
                       <div
                         className="prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{
                           __html: DOMPurify.sanitize(
-                            marked.parse(message.content) as string
+                            marked.parse(message.content as string) as string
                           ),
                         }}
                       />
+                    ) : (
+                      <div className="flex flex-col gap-2">
+                        {(message.content as GptRecipeSuggestions[]).map(
+                          (e, idx) => (
+                            <SuggestRecipeItem
+                              key={idx + 1}
+                              recipe={e}
+                              askRecipe={handleAskRecipe}
+                            />
+                          )
+                        )}
+                      </div>
                     )
                   ) : (
                     <p className="text-sm whitespace-pre-wrap">
-                      {message.content}
+                      {message.content as string}
                     </p>
                   )}
                 </div>
@@ -163,7 +192,7 @@ export default function ChefAiPage() {
           ))}
 
           {/* Loading indicator */}
-          {isTyping && (
+          {isLoading && (
             <div className="flex items-center text-gray-500 mb-6 mr-8">
               <div className="bg-gray-100 rounded-lg p-4">
                 <div className="flex space-x-2">
@@ -185,6 +214,7 @@ export default function ChefAiPage() {
             <textarea
               ref={inputRef}
               value={input}
+              name="prompt-editor"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask for recipe suggestions..."
