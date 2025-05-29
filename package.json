@@ -34,7 +34,7 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
     "isomorphic-dompurify": "^2.22.0",
-    "jotai": "^2.12.4",
+    "jotai": "^2.12.5",
     "lucide-react": "^0.511.0",
     "marked": "^15.0.12",
     "next": "15.3.2",

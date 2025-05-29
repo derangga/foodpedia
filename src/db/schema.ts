@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   pgTable,
+  pgEnum,
   index,
   text,
   integer,
@@ -147,25 +148,31 @@ export const comments = pgTable(
   (table) => [index("comment_recipe_id").on(table.recipeId)]
 );
 
-export const gptSession = pgTable("gpt_session", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id),
-  title: text("title").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  deletedAt: timestamp("deleted_at"),
-});
+export const gptSession = pgTable(
+  "gpt_session",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id),
+    title: text("title").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at"),
+  },
+  (table) => [index("gpt_session_user_id").on(table.userId)]
+);
+
+export const senderRoleEnum = pgEnum("sender_role", ["user", "assistant"]);
 
 export const gptMessage = pgTable(
   "gpt_message",
   {
-    sessionId: uuid("session_id")
-      .notNull()
-      .references(() => gptSession.id),
-    senderId: text("sender_id").notNull().default("gpt"),
+    sessionId: uuid("session_id").notNull(),
+    senderRole: senderRoleEnum().notNull(),
+    answerType: text("answer_type"),
     message: text("message").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at"),
   },
   (table) => [index("gpt_message_session_id").on(table.sessionId)]
 );
@@ -178,6 +185,17 @@ export const recipesRelations = relations(recipes, ({ one }) => ({
   author: one(user, {
     fields: [recipes.authorId],
     references: [user.id],
+  }),
+}));
+
+export const gptSessionRelations = relations(gptSession, ({ many }) => ({
+  messages: many(gptMessage),
+}));
+
+export const gptMessageRelations = relations(gptMessage, ({ one }) => ({
+  session: one(gptSession, {
+    fields: [gptMessage.sessionId],
+    references: [gptSession.id],
   }),
 }));
 

@@ -67,7 +67,7 @@ export async function createNewRecipe(
 
     return result.id;
   } catch (error) {
-    console.log(`ERROR: ${error}`);
+    console.error(`ERROR: ${error}`);
     return new Error("something wrong when insert recipe data");
   }
 }

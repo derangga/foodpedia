@@ -1,5 +1,5 @@
 export interface GptMessageResponse {
-  answer_type: string;
+  answer_type: "recipe_food" | "recipe_suggestions";
   language_use: string;
   answer: string | GptRecipeSuggestions[];
 }

@@ -26,7 +26,6 @@ export async function promptSuggestionRecipe(command: string) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const response: GptMessageResponse = JSON.parse(finalOutput);
-    console.log(response);
     return response;
   } catch (error) {
     console.error(`prompt [ERROR]: ${error}`);
@@ -47,7 +46,6 @@ export async function promptAskRecipe(language: string, command: string) {
 
     const finalOutput = removeBackticks(completion.choices[0].message.content);
     const response: GptMessageResponse = JSON.parse(finalOutput);
-    console.log(response);
     return response;
   } catch (error) {
     console.error(`prompt [ERROR]: ${error}`);

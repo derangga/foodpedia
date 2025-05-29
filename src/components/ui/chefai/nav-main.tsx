@@ -1,3 +1,5 @@
+"use client";
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,44 +9,35 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import ChatHistory from "@/models/chat-history";
 import { format } from "date-fns";
+import { useAtom } from "jotai";
+import { useGptSessionAtom } from "@/models/atom";
+import { GptSession } from "@/models/message";
+import { useEffect } from "react";
 
-export function NavMain() {
-  const chatHistory: ChatHistory[] = [
-    {
-      id: "1",
-      timestamp: new Date("2024-03-10T10:30:00"),
-      preview: "Italian pasta recipes",
-      url: "",
-    },
-    {
-      id: "2",
-      timestamp: new Date("2024-03-09T15:45:00"),
-      preview: "Vegetarian dinner ideas",
-      url: "",
-    },
-    {
-      id: "3",
-      timestamp: new Date("2024-03-08T09:20:00"),
-      preview: "Quick breakfast recipes",
-      url: "",
-    },
-  ];
+interface NavmainProps {
+  chatSessions: GptSession[];
+}
+
+export function NavMain({ chatSessions }: NavmainProps) {
+  const [chatHistory, setChatHistory] = useAtom(useGptSessionAtom);
+  useEffect(() => {
+    setChatHistory(chatSessions);
+  }, [chatSessions, setChatHistory]);
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Chat history</SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {chatHistory.map((item) => (
-            <SidebarMenuItem key={item.id}>
-              <Link href={item.url}>
+          {chatHistory.map((item, idx) => (
+            <SidebarMenuItem key={idx + 1}>
+              <Link href={`/chefai/${item.id}` || "/chefai"}>
                 <SidebarMenuButton
-                  tooltip={item.preview}
+                  tooltip={item.title}
                   className="hover:cursor-pointer text-ellipsis overflow-hidden line-clamp-1"
                 >
-                  {`${format(item.timestamp, "MMM d, yyyy")} | ${item.preview}`}
+                  {`${format(item.createdAt, "MMM d, yyyy")} | ${item.title}`}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/ui/chefai/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { Suspense } from "react";
 
 export default async function Layout({
   children,
@@ -14,7 +15,9 @@ export default async function Layout({
   });
   return (
     <SidebarProvider>
-      <ChefAiSidebar variant="inset" user={session?.user} />
+      <Suspense fallback={<div />}>
+        <ChefAiSidebar variant="inset" user={session?.user} />
+      </Suspense>
       <SidebarInset>
         <SiteHeader />
         {children}
