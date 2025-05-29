@@ -8,6 +8,7 @@ export interface Message {
   content: string | GptRecipeSuggestions[];
   role: "user" | "assistant";
   isTyping?: boolean;
+  isFailed?: boolean;
   timestamp: Date;
 }
 

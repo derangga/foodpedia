@@ -9,7 +9,7 @@ export default async function ChatHistoryPage({
   const { id } = await params;
   const messages = await getHistoryChatGpt(id);
   return (
-    <div className="flex flex-col max-w-3xl mx-auto p-4">
+    <div className="flex flex-col max-w-3xl w-full mx-auto p-4">
       <MessageBox messages={messages} />
     </div>
   );
