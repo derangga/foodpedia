@@ -92,8 +92,8 @@ const Navbar: React.FC<SessionProps> = ({ user }) => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar>
-                    <AvatarImage src={""} />
+                  <Avatar className="hover:cursor-pointer">
+                    <AvatarImage src={user.image || ""} />
                     <AvatarFallback className="rounded-full bg-gray-200 hover:bg-gray-700 hover:text-white">
                       {fallbackAvatar}
                     </AvatarFallback>
@@ -157,13 +157,48 @@ const Navbar: React.FC<SessionProps> = ({ user }) => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <MobileNavLink icon={null} label="Recipes" route="/recipes" />
             <MobileNavLink icon={null} label="ChefAI" route="/chefai" />
-            <Button
-              onClick={() => {
-                signIn();
-              }}
-            >
-              <LogIn /> Sign in
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="hover:cursor-pointer">
+                    <AvatarImage src={user.image || ""} />
+                    <AvatarFallback className="rounded-full bg-gray-200 hover:bg-gray-700 hover:text-white">
+                      {fallbackAvatar}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/recipes/new")}
+                    >
+                      <FilePlus />
+                      Create Recipe
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/profiles")}>
+                      <CircleUserRound />
+                      Profile
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="focus:bg-red-200 focus:text-red-600"
+                    onClick={() => signOut()}
+                  >
+                    <LogOut />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                onClick={() => {
+                  signIn();
+                }}
+              >
+                <LogIn /> Sign in
+              </Button>
+            )}
           </div>
         </div>
       )}

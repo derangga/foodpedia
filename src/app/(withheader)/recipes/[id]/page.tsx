@@ -1,60 +1,37 @@
 import React from "react";
+import { notFound } from "next/navigation";
 import { Heart, MessageCircle, User } from "lucide-react";
 import { format } from "date-fns";
+import { getDetailRecipe } from "@/actions/recipe";
+import Image from "next/image";
+import DOMPurify from "isomorphic-dompurify";
+import { imgURL } from "@/utils/image-url";
 
 export default async function DetailRecipePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // Mock data - in a real app, this would come from an API
-  const recipe = {
-    id: 1,
-    title: "Classic Tiramisu",
-    image: "https://images.pexels.com/photos/6601811/pexels-photo-6601811.jpeg",
-    creator: {
-      name: "Marco Rossi",
-      avatar:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
-    },
-    publishedAt: new Date("2024-02-12"),
-    story:
-      "This recipe has been in my family for generations. My nonna taught me how to make it when I was just a child, and it's been my favorite dessert ever since. The secret lies in the quality of the coffee and mascarpone cheese used.",
-    categories: ["Desserts", "Italian", "No-Bake"],
-    ingredients: [
-      "6 egg yolks",
-      "1 cup white sugar",
-      "1 1/4 cups mascarpone cheese",
-      "1 3/4 cups heavy whipping cream",
-      "2 (12 ounce) packages ladyfingers",
-      "1/3 cup coffee liqueur",
-      "1 cup cold espresso",
-      "1 tablespoon unsweetened cocoa powder",
-    ],
-    instructions: [
-      "In a medium saucepan, whisk together egg yolks and sugar until well blended.",
-      "Cook over medium heat, whisking constantly, until mixture boils and thickens.",
-      "Remove from heat and stir in mascarpone until smooth.",
-      "In a separate bowl, whip cream until stiff peaks form.",
-      "Gently fold whipped cream into mascarpone mixture.",
-      "Combine coffee and coffee liqueur in a shallow dish.",
-      "Quickly dip each ladyfinger into coffee mixture.",
-      "Arrange half of soaked ladyfingers in bottom of a 13x9 inch dish.",
-      "Spread half of mascarpone mixture over ladyfingers.",
-      "Repeat layers and sprinkle with cocoa.",
-    ],
-    favorites: 342,
-    comments: 28,
-  };
+  const { id } = await params;
+  const result = await getDetailRecipe(parseInt(id));
+  if (result.error) {
+    notFound();
+  }
 
+  const [recipe] = result.data;
+  const sanitizeDescription = DOMPurify.sanitize(recipe.guide);
+  const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
   return (
     <div className="container mx-auto px-4 py-24">
       {/* Recipe Image */}
       <div className="relative w-full h-[500px] rounded-2xl overflow-hidden mb-8">
-        <img
-          src={recipe.image}
+        <Image
+          src={imgSrc}
           alt={recipe.title}
-          className="w-full h-full object-cover"
+          fill
+          style={{
+            objectFit: "cover",
+          }}
         />
       </div>
 
@@ -63,15 +40,17 @@ export default async function DetailRecipePage({
 
       {/* User Section */}
       <div className="flex items-center gap-4 mb-8">
-        <img
-          src={recipe.creator.avatar}
-          alt={recipe.creator.name}
+        <Image
+          src={recipe.userImage || ""}
+          alt={recipe.userName}
+          width={100}
+          height={100}
           className="w-12 h-12 rounded-full object-cover"
         />
         <div>
-          <h3 className="font-medium text-gray-900">{recipe.creator.name}</h3>
+          <h3 className="font-medium text-gray-900">{recipe.userName}</h3>
           <p className="text-sm text-gray-500">
-            {format(recipe.publishedAt, "MMMM d, yyyy")}
+            {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
         </div>
       </div>
@@ -108,29 +87,23 @@ export default async function DetailRecipePage({
       </div>
 
       {/* Instructions */}
-      <div className="mb-8">
+      <article className="prose max-w-none mb-8">
         <h2 className="text-2xl font-semibold mb-4">Instructions</h2>
-        <ol className="space-y-4">
-          {recipe.instructions.map((instruction, index) => (
-            <li key={index} className="flex gap-4 text-gray-700">
-              <span className="flex-shrink-0 w-8 h-8 bg-orange-100 text-orange-800 rounded-full flex items-center justify-center font-medium">
-                {index + 1}
-              </span>
-              <p className="pt-1">{instruction}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+        <div
+          dangerouslySetInnerHTML={{ __html: sanitizeDescription }}
+          className="marker:text-black"
+        />
+      </article>
 
       {/* Engagement Section */}
       <div className="flex items-center gap-6 mb-12">
         <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
           <Heart className="h-6 w-6" />
-          <span>{recipe.favorites}</span>
+          <span>10</span>
         </button>
         <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
           <MessageCircle className="h-6 w-6" />
-          <span>{recipe.comments}</span>
+          <span>10</span>
         </button>
       </div>
 

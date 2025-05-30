@@ -17,3 +17,15 @@ export const RecipeSchema = z.object({
 });
 
 export type Recipe = z.infer<typeof RecipeSchema>;
+
+export interface RecipeDetail {
+  id: number;
+  title: string;
+  image: string | null;
+  categories: string[];
+  ingredients: string[];
+  story: string | null;
+  guide: string;
+  createdAt: string;
+  userName: string;
+}
