@@ -213,13 +213,13 @@ interface NavLinkProps {
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ icon, label, route }) => (
-  <a
+  <Link
     href={route}
     className="flex items-center text-orange-400 hover:text-orange-500 transition-colors font-medium"
   >
     {icon && <span className="mr-1">{icon}</span>}
     {label}
-  </a>
+  </Link>
 );
 
 interface MobileNavLinkProps extends NavLinkProps {
@@ -227,12 +227,13 @@ interface MobileNavLinkProps extends NavLinkProps {
 }
 
 const MobileNavLink: React.FC<MobileNavLinkProps> = ({
+  route,
   icon,
   label,
   isButton,
 }) => (
-  <a
-    href="#"
+  <Link
+    href={route}
     className={`flex items-center py-2 px-3 rounded-md ${
       isButton
         ? "bg-orange-500 text-white font-medium"
@@ -241,7 +242,7 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({
   >
     {icon && <span className="mr-2">{icon}</span>}
     {label}
-  </a>
+  </Link>
 );
 
 export default Navbar;

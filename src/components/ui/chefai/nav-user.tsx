@@ -19,11 +19,24 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { User } from "better-auth";
+import authClient from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export function NavUser({ user }: { user?: User }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
   const avatar = user?.image || "";
   const avatarFallback = user?.name.charAt(0);
+
+  const signOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.refresh();
+        },
+      },
+    });
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -72,13 +85,13 @@ export function NavUser({ user }: { user?: User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/profiles")}>
                 <UserCircleIcon />
                 Account
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
