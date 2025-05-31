@@ -29,3 +29,12 @@ export interface RecipeDetail {
   createdAt: string;
   userName: string;
 }
+
+export interface RecipeItem {
+  id: number;
+  title: string;
+  userName: string;
+  image: string | null;
+  categories: string[];
+  createdAt: Date;
+}

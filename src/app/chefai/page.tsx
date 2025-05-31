@@ -23,7 +23,7 @@ const greetings: Greeting[] = [
   },
 ];
 
-export default function ChefAiPage() {
+export default function Page() {
   const [messages, setMessages] = useAtom(useMessageAtom);
   const isLoading = useAtomValue(useLoadingAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);

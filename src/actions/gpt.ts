@@ -39,10 +39,7 @@ export async function promptGpt(sessionId: string, command: string) {
       createdAt: new Date(),
     };
 
-    await drizzleDb
-      .insert(gptMessage)
-      .values([userMsgValue, gptMsgValue])
-      .returning();
+    await drizzleDb.insert(gptMessage).values([userMsgValue, gptMsgValue]);
 
     return gptResponse;
   } catch (error) {

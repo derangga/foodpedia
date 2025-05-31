@@ -6,6 +6,7 @@ import { getDetailRecipe } from "@/actions/recipe";
 import Image from "next/image";
 import DOMPurify from "isomorphic-dompurify";
 import { imgURL } from "@/utils/image-url";
+import { getCommentsRecipe } from "@/actions/comment";
 
 export default async function DetailRecipePage({
   params,
@@ -13,12 +14,17 @@ export default async function DetailRecipePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const result = await getDetailRecipe(parseInt(id));
-  if (result.error) {
+  const recipeId = parseInt(id);
+  const [recipeDetail, comments] = await Promise.all([
+    getDetailRecipe(recipeId),
+    getCommentsRecipe(recipeId),
+  ]);
+
+  if (!recipeDetail) {
     notFound();
   }
 
-  const [recipe] = result.data;
+  const [recipe] = recipeDetail.data;
   const sanitizeDescription = DOMPurify.sanitize(recipe.guide);
   const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
   return (
@@ -99,11 +105,11 @@ export default async function DetailRecipePage({
       <div className="flex items-center gap-6 mb-12">
         <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
           <Heart className="h-6 w-6" />
-          <span>10</span>
+          <span>{recipe.favoriteCount}</span>
         </button>
         <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
           <MessageCircle className="h-6 w-6" />
-          <span>10</span>
+          <span>{recipe.commentsCount}</span>
         </button>
       </div>
 
@@ -130,46 +136,28 @@ export default async function DetailRecipePage({
 
         {/* Comments List */}
         <div className="space-y-6">
-          {[
-            {
-              id: 1,
-              user: {
-                name: "Sarah Chen",
-                avatar:
-                  "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg",
-              },
-              content:
-                "Made this last weekend and it was absolutely delicious! The instructions were very clear and easy to follow.",
-              timestamp: new Date("2024-03-15T10:30:00"),
-            },
-            {
-              id: 2,
-              user: {
-                name: "David Wilson",
-                avatar:
-                  "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg",
-              },
-              content:
-                "Great recipe! I added a bit more coffee liqueur and it turned out perfect. Thanks for sharing!",
-              timestamp: new Date("2024-03-14T15:45:00"),
-            },
-          ].map((comment) => (
+          {comments?.data?.map((comment) => (
             <div key={comment.id} className="flex gap-4">
-              <img
-                src={comment.user.avatar}
-                alt={comment.user.name}
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              <Image
+                src={comment.userImage || ""}
+                alt={comment.userName}
+                width={100}
+                height={100}
+                style={{
+                  objectFit: "cover",
+                }}
+                className="w-10 h-10 rounded-full lex-shrink-0"
               />
               <div>
                 <div className="flex items-baseline gap-2 mb-1">
                   <h4 className="font-medium text-gray-900">
-                    {comment.user.name}
+                    {comment.userName}
                   </h4>
                   <span className="text-sm text-gray-500">
-                    {format(comment.timestamp, "MMM d, yyyy")}
+                    {format(comment.createdAt, "MMM d, yyyy")}
                   </span>
                 </div>
-                <p className="text-gray-700">{comment.content}</p>
+                <p className="text-gray-700">{comment.comment}</p>
               </div>
             </div>
           ))}

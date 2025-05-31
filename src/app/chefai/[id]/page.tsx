@@ -1,7 +1,7 @@
 import { getHistoryChatGpt } from "@/actions/gpt";
 import MessageBox from "@/components/ui/chefai/message-box";
 
-export default async function ChatHistoryPage({
+export default async function Page({
   params,
 }: {
   params: Promise<{ id: string }>;

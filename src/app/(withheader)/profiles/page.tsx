@@ -76,7 +76,7 @@ const RECIPES = [
   },
 ];
 
-export default function ProfilePage() {
+export default function Page() {
   const [activeTab, setActiveTab] = useState<"recipes" | "favorites">(
     "recipes"
   );

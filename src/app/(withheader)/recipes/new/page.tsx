@@ -26,7 +26,7 @@ const CATEGORIES = [
   "Snacks",
 ];
 
-const NewRecipe: React.FC = () => {
+export default function Page() {
   const maxImgSize = 500 * 1000; // max 500kb
   const router = useRouter();
   const ingredients = useRef<string[]>([]);
@@ -233,6 +233,4 @@ const NewRecipe: React.FC = () => {
       <LoadingDialog show={isLoading} />
     </div>
   );
-};
-
-export default NewRecipe;
+}

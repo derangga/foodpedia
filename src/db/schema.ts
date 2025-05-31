@@ -92,9 +92,9 @@ export const recipes = pgTable(
     ingredients: text("ingredients").array().notNull(),
     story: text("story"),
     guide: text("guide").notNull(),
-    createdAt: timestamp("created_at").$defaultFn(
-      () => /* @__PURE__ */ new Date()
-    ),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .$defaultFn(() => /* @__PURE__ */ new Date()),
     updatedAt: timestamp("updated_at").$defaultFn(
       () => /* @__PURE__ */ new Date()
     ),

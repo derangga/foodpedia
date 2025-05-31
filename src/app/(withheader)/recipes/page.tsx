@@ -1,7 +1,8 @@
 "use client";
 import PopoverFilter from "@/components/ui/recipes/popover-filter";
 import RecipeCard from "@/components/ui/recipes/recipes-card";
-import { Recipe } from "@/models/recipe";
+import RecipeSkeleton from "@/components/ui/recipes/recipes-skeleton";
+import { useRecipesDebounce } from "@/hooks/use-recipes-debounce";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
@@ -28,44 +29,10 @@ const CATEGORIES = [
   "Drinks",
 ];
 
-const MOCK_RECIPES: Recipe[] = [
-  {
-    id: 1,
-    title: "Chocolate Lava Cake",
-    image: "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg",
-    authorId: "Emily Johnson",
-    categories: ["Desserts"],
-    ingredients: [],
-    guide: "",
-    updatedAt: new Date("2024-02-15"),
-    createdAt: new Date(),
-  },
-  {
-    id: 2,
-    title: "Grilled Chicken Salad",
-    image: "https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg",
-    authorId: "Michael Chen",
-    categories: ["Chicken"],
-    ingredients: [],
-    guide: "",
-    updatedAt: new Date("2024-02-15"),
-    createdAt: new Date(),
-  },
-  {
-    id: 3,
-    title: "Beef Stroganoff",
-    image: "https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg",
-    authorId: "Sarah Williams",
-    categories: ["Beef"],
-    ingredients: [],
-    guide: "",
-    updatedAt: new Date("2024-02-15"),
-    createdAt: new Date(),
-  },
-];
-
 export default function RecipesPage() {
+  const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const { recipes, loading } = useRecipesDebounce(query, selectedCategories);
 
   return (
     <div className="container mx-auto px-4 py-24">
@@ -76,6 +43,7 @@ export default function RecipesPage() {
             type="text"
             placeholder="Search recipes..."
             className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            onChange={(e) => setQuery(e.target.value)}
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
         </div>
@@ -88,9 +56,9 @@ export default function RecipesPage() {
 
       {/* Recipe Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {MOCK_RECIPES.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
-        ))}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => <RecipeSkeleton key={i} />)
+          : recipes.map((r) => <RecipeCard key={r.id} recipe={r} />)}
       </div>
     </div>
   );
