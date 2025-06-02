@@ -121,11 +121,11 @@ export async function getRecipeFavorite(userId: string) {
       .innerJoin(recipes, eq(favorites.recipeId, recipes.id))
       .innerJoin(user, eq(favorites.recipeOwnerId, user.id))
       .where(and(isNull(recipes.deletedAt), eq(favorites.userId, userId)))
-      .groupBy(recipes.id, recipes.title, user.name)
+      .groupBy(favorites.recipeId, recipes.id, recipes.title, user.name)
       .orderBy(desc(recipes.createdAt))
   );
   if (result.error) {
-    console.error(`Failed recipes: ${result.error}`);
+    console.error(`Failed recipes favorite: ${result.error}`);
     return [];
   }
 

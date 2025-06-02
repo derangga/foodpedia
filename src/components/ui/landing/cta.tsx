@@ -1,7 +1,16 @@
+"use client";
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import { Button } from "../button";
+import authClient from "@/lib/auth-client";
 
 const CallToAction: React.FC = () => {
+  const signIn = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
+  };
+
   return (
     <section className="py-20 bg-gradient-to-r from-orange-500 to-red-500 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,12 +26,19 @@ const CallToAction: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="px-6 py-3 bg-white text-orange-600 rounded-full font-medium hover:bg-gray-100 transition-colors">
+            <Button
+              size="lg"
+              onClick={() => signIn()}
+              className=" bg-white text-orange-600 rounded-full font-medium hover:bg-gray-100 transition-colors"
+            >
               Sign Up Free
-            </button>
-            <button className="px-6 py-3 bg-transparent border border-white text-white rounded-full font-medium hover:bg-white/10 transition-colors flex items-center">
+            </Button>
+            <Button
+              size="lg"
+              className="bg-transparent border border-white text-white rounded-full font-medium hover:bg-white/10 transition-colors flex items-center"
+            >
               Learn More <ArrowRight className="ml-2 h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
