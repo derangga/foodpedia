@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { X } from "lucide-react";
 import { Input } from "../input";
+import Category from "@/models/category";
 
 interface InputCategoryPopover {
-  categories: string[];
+  categories: Category[];
   onCategorySelected?: (categories: string[]) => void;
 }
 
@@ -17,8 +18,8 @@ const InputCategoryPopover: React.FC<InputCategoryPopover> = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const filteredCategories = categories.filter(
     (category) =>
-      category.toLowerCase().includes(categoryInput.toLowerCase()) &&
-      !selectedCategories.includes(category)
+      category.name.toLowerCase().includes(categoryInput.toLowerCase()) &&
+      !selectedCategories.includes(category.name)
   );
   const addCategory = (category: string) => {
     if (!selectedCategories.includes(category)) {
@@ -69,12 +70,12 @@ const InputCategoryPopover: React.FC<InputCategoryPopover> = ({
         >
           {filteredCategories.map((category) => (
             <button
-              key={category}
+              key={category.key}
               type="button"
-              onClick={() => addCategory(category)}
+              onClick={() => addCategory(category.name)}
               className="w-full text-left px-3 py-2 hover:bg-orange-50 rounded-md"
             >
-              {category}
+              {category.name}
             </button>
           ))}
         </PopoverContent>
