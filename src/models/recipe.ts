@@ -18,7 +18,7 @@ export const RecipeSchema = z.object({
 
 export type Recipe = z.infer<typeof RecipeSchema>;
 
-export interface RecipeDetail {
+export type RecipeDetail = {
   id: number;
   title: string;
   image: string | null;
@@ -28,13 +28,13 @@ export interface RecipeDetail {
   guide: string;
   createdAt: string;
   userName: string;
-}
+};
 
-export interface RecipeItem {
+export type RecipeItem = {
   id: number;
   title: string;
   userName: string;
   image: string | null;
   categories: string[];
   createdAt: Date;
-}
+};

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { GptRecipeSuggestions } from "./gpt";
 
-export interface Message {
+export type Message = {
   id: string;
   answerType?: string | null;
   language?: string;
@@ -10,7 +10,7 @@ export interface Message {
   isTyping?: boolean;
   isFailed?: boolean;
   timestamp: Date;
-}
+};
 
 export const GptSessionSchema = z.object({
   id: z.string().optional(), // filed by db

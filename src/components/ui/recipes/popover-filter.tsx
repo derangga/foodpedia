@@ -3,9 +3,10 @@ import { Filter, X, Search } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { Checkbox } from "../checkbox";
 import { cn } from "@/lib/utils";
+import Category from "@/models/category";
 
 interface PopoverFilterProps {
-  categories: string[];
+  categories: Category[];
   selectedCategories: string[];
   onCategoryChange: (categories: string[]) => void;
 }
@@ -18,7 +19,7 @@ const PopoverFilter: React.FC<PopoverFilterProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCategories = categories.filter((category) =>
-    category.toLowerCase().includes(searchQuery.toLowerCase())
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const toggleCategory = (category: string) => {
@@ -87,23 +88,23 @@ const PopoverFilter: React.FC<PopoverFilterProps> = ({
 
         <div className="space-y-3 max-h-60 overflow-y-auto">
           {filteredCategories.map((category) => (
-            <div key={category} className="flex items-center space-x-2">
+            <div key={category.key} className="flex items-center space-x-2">
               <Checkbox
-                id={category}
-                checked={selectedCategories.includes(category)}
-                onCheckedChange={() => toggleCategory(category)}
+                id={category.name}
+                checked={selectedCategories.includes(category.name)}
+                onCheckedChange={() => toggleCategory(category.name)}
                 className={cn(
                   "h-4 w-4 rounded border border-gray-300",
                   "flex items-center justify-center",
-                  selectedCategories.includes(category) &&
+                  selectedCategories.includes(category.name) &&
                     "data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500 data-[state=checked]:text-white"
                 )}
               />
               <label
-                htmlFor={category}
+                htmlFor={category.name}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {category}
+                {category.name}
               </label>
             </div>
           ))}

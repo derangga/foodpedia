@@ -9,6 +9,7 @@ import {
   boolean,
   serial,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -74,10 +75,11 @@ export const verification = pgTable("verification", {
 
 export const category = pgTable("category", {
   id: serial("id").primaryKey(),
-  name: text("text").notNull().unique(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
+  key: varchar("key", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  createdAt: timestamp("created_at")
+    .notNull()
+    .$defaultFn(() => /* @__PURE__ */ new Date()),
   deletedAt: timestamp("deleted_at"),
 });
 
