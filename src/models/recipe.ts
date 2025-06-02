@@ -30,11 +30,15 @@ export type RecipeDetail = {
   userName: string;
 };
 
-export type RecipeItem = {
+export interface RecipeItem {
   id: number;
   title: string;
-  userName: string;
+  username: string;
   image: string | null;
   categories: string[];
   createdAt: Date;
-};
+}
+
+export interface UserRecipeItem extends RecipeItem {
+  likes: number;
+}

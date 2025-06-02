@@ -48,13 +48,13 @@ export default async function DetailRecipePage({
       <div className="flex items-center gap-4 mb-8">
         <Image
           src={recipe.userImage || ""}
-          alt={recipe.userName}
+          alt={recipe.username}
           width={100}
           height={100}
           className="w-12 h-12 rounded-full object-cover"
         />
         <div>
-          <h3 className="font-medium text-gray-900">{recipe.userName}</h3>
+          <h3 className="font-medium text-gray-900">{recipe.username}</h3>
           <p className="text-sm text-gray-500">
             {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
