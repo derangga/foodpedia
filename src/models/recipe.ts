@@ -26,8 +26,13 @@ export type RecipeDetail = {
   ingredients: string[];
   story: string | null;
   guide: string;
-  createdAt: string;
-  userName: string;
+  createdAt: Date;
+  authorId: string;
+  author: string;
+  userImage: string | null;
+  isFavorited: boolean;
+  commentsCount: number;
+  favoriteCount: number;
 };
 
 export interface RecipeItem {

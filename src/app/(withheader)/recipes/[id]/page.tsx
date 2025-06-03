@@ -1,12 +1,13 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { Heart, MessageCircle, User } from "lucide-react";
+import { User } from "lucide-react";
 import { format } from "date-fns";
 import { getDetailRecipe } from "@/actions/recipe";
 import Image from "next/image";
 import DOMPurify from "isomorphic-dompurify";
 import { imgURL } from "@/utils/image-url";
 import { getCommentsRecipe } from "@/actions/comment";
+import Engagement from "@/components/ui/recipes/detail/engagement";
 
 export default async function DetailRecipePage({
   params,
@@ -27,6 +28,7 @@ export default async function DetailRecipePage({
   const [recipe] = recipeDetail.data;
   const sanitizeDescription = DOMPurify.sanitize(recipe.guide);
   const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
+
   return (
     <div className="container mx-auto px-4 py-24">
       {/* Recipe Image */}
@@ -48,13 +50,13 @@ export default async function DetailRecipePage({
       <div className="flex items-center gap-4 mb-8">
         <Image
           src={recipe.userImage || ""}
-          alt={recipe.username}
+          alt={recipe.author}
           width={100}
           height={100}
           className="w-12 h-12 rounded-full object-cover"
         />
         <div>
-          <h3 className="font-medium text-gray-900">{recipe.username}</h3>
+          <h3 className="font-medium text-gray-900">{recipe.author}</h3>
           <p className="text-sm text-gray-500">
             {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
@@ -101,17 +103,7 @@ export default async function DetailRecipePage({
         />
       </article>
 
-      {/* Engagement Section */}
-      <div className="flex items-center gap-6 mb-12">
-        <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-          <Heart className="h-6 w-6" />
-          <span>{recipe.favoriteCount}</span>
-        </button>
-        <button className="flex items-center gap-2 text-gray-700 hover:text-orange-500 transition-colors">
-          <MessageCircle className="h-6 w-6" />
-          <span>{recipe.commentsCount}</span>
-        </button>
-      </div>
+      <Engagement recipe={recipe} />
 
       {/* Comments Section */}
       <div>

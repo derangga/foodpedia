@@ -1,5 +1,6 @@
 import drizzleDb from "@/db";
 import { comments, favorites, recipes, user } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { RecipeItem, UserRecipeItem } from "@/models/recipe";
 import { tryCatch } from "@/utils/try-catch";
 import {
@@ -10,9 +11,15 @@ import {
   desc,
   ilike,
   arrayOverlaps,
+  sql,
 } from "drizzle-orm";
+import { headers } from "next/headers";
 
 export async function getDetailRecipe(id: number) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const userId = session?.user.id || "";
   const result = await tryCatch(
     drizzleDb
       .select({
@@ -24,17 +31,30 @@ export async function getDetailRecipe(id: number) {
         story: recipes.story,
         guide: recipes.guide,
         createdAt: recipes.createdAt,
-        username: user.name,
+        authorId: user.id,
+        author: user.name,
         userImage: user.image,
-        commentsCount: count(comments.id),
-        favoriteCount: count(favorites.id),
+        commentsCount: sql<number>`COUNT(CASE
+            WHEN ${comments.id} IS NOT NULL AND ${comments.deletedAt} IS NULL
+            THEN 1
+          END)`.as("commentsCount"),
+        favoriteCount: sql<number>`COUNT(CASE
+            WHEN ${favorites.id} IS NOT NULL AND ${favorites.deletedAt} IS NULL
+            THEN 1
+          END)`.as("favoriteCount"),
+        isFavorited: sql<boolean>`EXISTS (
+          SELECT 1 FROM ${favorites}
+          WHERE ${favorites.recipeId} = ${recipes.id}
+            AND ${favorites.userId} = ${userId}
+            AND ${favorites.deletedAt} IS NULL
+        )`,
       })
       .from(recipes)
       .innerJoin(user, eq(recipes.authorId, user.id))
       .leftJoin(comments, eq(recipes.id, comments.recipeId))
       .leftJoin(favorites, eq(recipes.id, favorites.recipeId))
       .where(eq(recipes.id, id))
-      .groupBy(recipes.id, user.name, user.image)
+      .groupBy(recipes.id, user.id, user.name, user.image)
   );
   if (result.error) {
     console.error(`Failed get detail: ${result.error}`);

@@ -1,66 +1,149 @@
 import { RecipeItem } from "@/models/recipe";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import debounce from "lodash.debounce";
+
+interface UseRecipesDebounceOptions {
+  debounceDelay?: number;
+  enabled?: boolean;
+}
 
 export function useRecipesDebounce(
   query: string,
-  selectedCategories: string[]
+  selectedCategories: string[],
+  options: UseRecipesDebounceOptions = {}
 ) {
+  const { debounceDelay = 300, enabled = true } = options;
+
   const [recipes, setRecipes] = useState<RecipeItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const abortControllerRef = useRef<AbortController | null>(null);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
 
-  useEffect(() => {
-    // Clear previous debounce timeout
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
+  // Cleanup function to abort ongoing requests
+  const cleanup = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
     }
+  }, []);
 
-    // Set new debounce timeout
-    debounceTimeoutRef.current = setTimeout(() => {
-      // Abort previous fetch if it exists
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+  // Main fetch function
+  const fetchRecipes = useCallback(
+    async (searchQuery: string, categories: string[]) => {
+      // Don't fetch if component is unmounted or disabled
+      if (!isMountedRef.current || !enabled) return;
 
+      // Abort any ongoing request
+      cleanup();
+
+      // Create new abort controller
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
-      const fetchRecipes = async () => {
+      // Only set loading if component is still mounted
+      if (isMountedRef.current) {
         setLoading(true);
+        setError(null);
+      }
+
+      try {
         const params = new URLSearchParams();
-        if (query) params.set("query", query);
-        if (selectedCategories.length)
-          params.set("filter", selectedCategories.join(","));
+        if (searchQuery.trim()) params.set("query", searchQuery.trim());
+        if (categories.length) params.set("filter", categories.join(","));
 
-        try {
-          const res = await fetch(`/api/recipes?${params.toString()}`, {
-            signal: controller.signal,
-          });
+        const res = await fetch(`/api/recipes?${params.toString()}`, {
+          signal: controller.signal,
+        });
 
-          if (!res.ok) throw new Error("Failed to fetch");
-          const data = await res.json();
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch recipes: ${res.status} ${res.statusText}`
+          );
+        }
+
+        const data = await res.json();
+
+        // Only update state if component is still mounted and this is the current request
+        if (isMountedRef.current && abortControllerRef.current === controller) {
           setRecipes(data);
-        } catch (err) {
-          console.error("Fetch error:", err);
-        } finally {
+          setError(null);
+        }
+      } catch (err) {
+        // Only handle error if not aborted and component is mounted
+        if (isMountedRef.current && abortControllerRef.current === controller) {
+          if (err instanceof Error && err.name !== "AbortError") {
+            console.error("Fetch error:", err);
+            setError(err.message);
+            setRecipes([]); // Clear recipes on error
+          }
+        }
+      } finally {
+        // Only update loading state if component is still mounted and this is the current request
+        if (isMountedRef.current && abortControllerRef.current === controller) {
           setLoading(false);
         }
-      };
+      }
+    },
+    [cleanup, enabled]
+  );
 
-      fetchRecipes();
-    }, 300); // 300ms debounce delay
+  const debouncedFetchRef = useRef<ReturnType<typeof debounce> | null>(null);
+
+  // Update the debounced function when dependencies change
+  useEffect(() => {
+    debouncedFetchRef.current = debounce(
+      (searchQuery: string, categories: string[]) => {
+        fetchRecipes(searchQuery, categories);
+      },
+      debounceDelay
+    );
+
+    return () => {
+      debouncedFetchRef.current?.cancel();
+    };
+  }, [fetchRecipes, debounceDelay]);
+
+  // Effect to handle search when query or categories change
+  useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
+    // Trigger debounced fetch
+    debouncedFetchRef.current?.(query, selectedCategories);
 
     // Cleanup function
     return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      debouncedFetchRef.current?.cancel();
     };
-  }, [query, selectedCategories]);
+  }, [query, selectedCategories, enabled, cleanup]);
 
-  return { recipes, loading };
+  // Cleanup effect for component unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+      cleanup();
+      debouncedFetchRef.current?.cancel();
+    };
+  }, [cleanup]);
+
+  // Manual refresh function
+  const refresh = useCallback(() => {
+    if (enabled) {
+      debouncedFetchRef.current?.cancel();
+      fetchRecipes(query, selectedCategories);
+    }
+  }, [fetchRecipes, query, selectedCategories, enabled]);
+
+  return {
+    recipes,
+    loading,
+    error,
+    refresh,
+  };
 }
