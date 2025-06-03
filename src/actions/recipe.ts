@@ -11,7 +11,6 @@ import {
   desc,
   ilike,
   arrayOverlaps,
-  sql,
 } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -20,8 +19,9 @@ export async function getDetailRecipe(id: number) {
     headers: await headers(),
   });
   const userId = session?.user.id || "";
-  const result = await tryCatch(
-    drizzleDb
+
+  try {
+    const detail = await drizzleDb
       .select({
         id: recipes.id,
         title: recipes.title,
@@ -30,37 +30,57 @@ export async function getDetailRecipe(id: number) {
         ingredients: recipes.ingredients,
         story: recipes.story,
         guide: recipes.guide,
+        authorId: recipes.authorId,
+        authorName: user.name,
+        authorImage: user.image,
         createdAt: recipes.createdAt,
-        authorId: user.id,
-        author: user.name,
-        userImage: user.image,
-        commentsCount: sql<number>`COUNT(CASE
-            WHEN ${comments.id} IS NOT NULL AND ${comments.deletedAt} IS NULL
-            THEN 1
-          END)`.as("commentsCount"),
-        favoriteCount: sql<number>`COUNT(CASE
-            WHEN ${favorites.id} IS NOT NULL AND ${favorites.deletedAt} IS NULL
-            THEN 1
-          END)`.as("favoriteCount"),
-        isFavorited: sql<boolean>`EXISTS (
-          SELECT 1 FROM ${favorites}
-          WHERE ${favorites.recipeId} = ${recipes.id}
-            AND ${favorites.userId} = ${userId}
-            AND ${favorites.deletedAt} IS NULL
-        )`,
       })
       .from(recipes)
       .innerJoin(user, eq(recipes.authorId, user.id))
-      .leftJoin(comments, eq(recipes.id, comments.recipeId))
-      .leftJoin(favorites, eq(recipes.id, favorites.recipeId))
-      .where(eq(recipes.id, id))
-      .groupBy(recipes.id, user.id, user.name, user.image)
-  );
-  if (result.error) {
-    console.error(`Failed get detail: ${result.error}`);
+      .where(and(eq(recipes.id, id), isNull(recipes.deletedAt)));
+
+    if (!detail[0]) {
+      return null;
+    }
+
+    const [commentsCount, favoriteCount] = await Promise.all([
+      drizzleDb
+        .select({ count: count(comments.id) })
+        .from(comments)
+        .where(and(eq(comments.recipeId, id), isNull(comments.deletedAt))),
+      drizzleDb
+        .select({ count: count(favorites.id) })
+        .from(favorites)
+        .where(and(eq(favorites.recipeId, id), isNull(favorites.deletedAt))),
+    ]);
+
+    let isFavorited = false;
+    if (userId) {
+      const favoriteCheck = await drizzleDb
+        .select({ id: favorites.id })
+        .from(favorites)
+        .where(
+          and(
+            eq(favorites.recipeId, id),
+            eq(favorites.userId, userId),
+            isNull(favorites.deletedAt)
+          )
+        )
+        .limit(1);
+
+      isFavorited = favoriteCheck.length > 0;
+    }
+
+    return {
+      ...detail[0],
+      commentsCount: commentsCount[0]?.count || 0,
+      favoriteCount: favoriteCount[0]?.count || 0,
+      isFavorited,
+    };
+  } catch (error) {
+    console.error(`failed get detail: ${error}`);
     return null;
   }
-  return result;
 }
 
 export async function getRecipes(searchQuery: string, filters: string[]) {

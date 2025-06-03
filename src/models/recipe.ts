@@ -28,8 +28,8 @@ export type RecipeDetail = {
   guide: string;
   createdAt: Date;
   authorId: string;
-  author: string;
-  userImage: string | null;
+  authorName: string;
+  authorImage: string | null;
   isFavorited: boolean;
   commentsCount: number;
   favoriteCount: number;

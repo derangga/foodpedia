@@ -16,16 +16,15 @@ export default async function DetailRecipePage({
 }) {
   const { id } = await params;
   const recipeId = parseInt(id);
-  const [recipeDetail, comments] = await Promise.all([
+  const [recipe, comments] = await Promise.all([
     getDetailRecipe(recipeId),
     getCommentsRecipe(recipeId),
   ]);
 
-  if (!recipeDetail) {
+  if (!recipe) {
     notFound();
   }
 
-  const [recipe] = recipeDetail.data;
   const sanitizeDescription = DOMPurify.sanitize(recipe.guide);
   const imgSrc = imgURL(`${recipe.id}/${recipe.image}`);
 
@@ -49,14 +48,14 @@ export default async function DetailRecipePage({
       {/* User Section */}
       <div className="flex items-center gap-4 mb-8">
         <Image
-          src={recipe.userImage || ""}
-          alt={recipe.author}
+          src={recipe.authorImage || ""}
+          alt={recipe.authorName}
           width={100}
           height={100}
           className="w-12 h-12 rounded-full object-cover"
         />
         <div>
-          <h3 className="font-medium text-gray-900">{recipe.author}</h3>
+          <h3 className="font-medium text-gray-900">{recipe.authorName}</h3>
           <p className="text-sm text-gray-500">
             {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
