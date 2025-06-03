@@ -1,44 +1,8 @@
 import { BookOpen, Heart, PlusCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
 import { UserRecipeItem } from "@/models/recipe";
-import Image from "next/image";
 import Link from "next/link";
-import { format } from "date-fns";
-
-interface RecipeImageItemProps {
-  recipe: UserRecipeItem;
-}
-const RecipeImageItem: React.FC<RecipeImageItemProps> = ({ recipe }) => {
-  const imgSrc = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${recipe.id}/${recipe.image}`;
-  return (
-    <div
-      key={recipe.id}
-      className="group relative w-full aspect-square rounded-lg overflow-hidden bg-gray-100"
-    >
-      <Image
-        src={imgSrc}
-        alt={recipe.title}
-        fill
-        style={{
-          objectFit: "cover",
-        }}
-      />
-
-      <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="text-white text-center p-4">
-          <h3 className="font-semibold mb-2">{recipe.title}</h3>
-          <div className="flex items-center justify-center gap-2">
-            <Heart className="h-5 w-5 fill-white" />
-            <span>{recipe.likes}</span>
-          </div>
-          <div className="text-sm mt-2">
-            {format(recipe.createdAt, "MMM d, yyyy")}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import RecipeImageItem from "./recipe-image-item";
 
 const EmptyState: React.FC<{ type: "recipes" | "favorites" }> = ({ type }) => (
   <div className="flex flex-col items-center justify-center py-12 px-4">

@@ -8,6 +8,9 @@ import { imgURL } from "@/utils/image-url";
 import { getCommentsRecipe } from "@/actions/comment";
 import Engagement from "@/components/ui/recipes/detail/engagement";
 import CommentInput from "@/components/ui/recipes/detail/comment-input";
+import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function DetailRecipePage({
   params,
@@ -16,7 +19,10 @@ export default async function DetailRecipePage({
 }) {
   const { id } = await params;
   const recipeId = parseInt(id);
-  const [recipe, comments] = await Promise.all([
+  const [session, recipe, comments] = await Promise.all([
+    auth.api.getSession({
+      headers: await headers(),
+    }),
     getDetailRecipe(recipeId),
     getCommentsRecipe(recipeId),
   ]);
@@ -46,7 +52,14 @@ export default async function DetailRecipePage({
       <h1 className="text-4xl font-bold text-gray-900 mb-6">{recipe.title}</h1>
 
       {/* User Section */}
-      <div className="flex items-center gap-4 mb-8">
+      <Link
+        href={
+          session?.user.id === recipe.authorId
+            ? `/profiles`
+            : `/profiles/${recipe.authorId}`
+        }
+        className="flex items-center gap-4 mb-8"
+      >
         <Image
           src={recipe.authorImage || ""}
           alt={recipe.authorName}
@@ -57,10 +70,11 @@ export default async function DetailRecipePage({
         <div>
           <h3 className="font-medium text-gray-900">{recipe.authorName}</h3>
           <p className="text-sm text-gray-500">
+            Published at{" "}
             {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
         </div>
-      </div>
+      </Link>
 
       {/* Story */}
       <div className="prose max-w-none mb-8">
