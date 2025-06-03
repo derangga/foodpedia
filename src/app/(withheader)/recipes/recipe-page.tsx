@@ -9,11 +9,12 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 
 interface RecipePageProps {
+  searchQuery: string | undefined;
   categories: Category[];
 }
 
-const RecipePage: React.FC<RecipePageProps> = ({ categories }) => {
-  const [query, setQuery] = useState("");
+const RecipePage: React.FC<RecipePageProps> = ({ categories, searchQuery }) => {
+  const [query, setQuery] = useState(searchQuery || "");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { recipes, loading } = useRecipesDebounce(query, selectedCategories);
   return (
@@ -23,6 +24,7 @@ const RecipePage: React.FC<RecipePageProps> = ({ categories }) => {
         <div className="relative flex-1">
           <input
             type="text"
+            defaultValue={query}
             placeholder="Search recipes..."
             className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
             onChange={(e) => setQuery(e.target.value)}

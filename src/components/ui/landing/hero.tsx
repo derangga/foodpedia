@@ -1,6 +1,5 @@
 import React from "react";
-import { Search } from "lucide-react";
-import { Input } from "../input";
+import SearchBar from "./searchbar";
 
 const Hero: React.FC = () => {
   return (
@@ -26,16 +25,7 @@ const Hero: React.FC = () => {
         </p>
 
         {/* Search Bar */}
-        <div className="relative max-w-md mx-auto">
-          <Input
-            type="text"
-            placeholder="Search for recipes..."
-            className="w-full px-5 py-3 pr-12 rounded-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-lg"
-          />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-orange-500 hover:text-orange-600">
-            <Search className="h-5 w-5" />
-          </button>
-        </div>
+        <SearchBar />
 
         {/* Stats */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 text-white">

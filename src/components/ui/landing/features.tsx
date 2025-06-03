@@ -1,5 +1,7 @@
 import React from "react";
 import { Share2, Search, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Button } from "../button";
 
 const Features: React.FC = () => {
   return (
@@ -71,9 +73,14 @@ const Features: React.FC = () => {
                   </li>
                 ))}
               </ul>
-              <button className="mt-8 px-6 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 transition-colors">
-                Try ChefAI Now
-              </button>
+              <Link href={"/chefai"}>
+                <Button
+                  size="lg"
+                  className="mt-8 px-6 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 transition-colors"
+                >
+                  Try ChefAI Now
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
