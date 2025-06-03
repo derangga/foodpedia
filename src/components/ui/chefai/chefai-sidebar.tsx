@@ -63,7 +63,7 @@ export async function ChefAiSidebar({
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain chatSessions={session} />
+        <NavMain initialSessions={session} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

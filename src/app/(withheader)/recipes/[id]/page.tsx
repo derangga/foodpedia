@@ -1,6 +1,5 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { User } from "lucide-react";
 import { format } from "date-fns";
 import { getDetailRecipe } from "@/actions/recipe";
 import Image from "next/image";
@@ -8,6 +7,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { imgURL } from "@/utils/image-url";
 import { getCommentsRecipe } from "@/actions/comment";
 import Engagement from "@/components/ui/recipes/detail/engagement";
+import CommentInput from "@/components/ui/recipes/detail/comment-input";
 
 export default async function DetailRecipePage({
   params,
@@ -109,21 +109,7 @@ export default async function DetailRecipePage({
         <h2 className="text-2xl font-semibold mb-6">Comments</h2>
 
         {/* Comment Input */}
-        <div className="flex gap-4 mb-8">
-          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-            <User className="h-6 w-6 text-gray-500" />
-          </div>
-          <div className="flex-1">
-            <textarea
-              placeholder="Add a comment..."
-              className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-              rows={3}
-            />
-            <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-              Post Comment
-            </button>
-          </div>
-        </div>
+        <CommentInput recipeId={recipeId} />
 
         {/* Comments List */}
         <div className="space-y-6">

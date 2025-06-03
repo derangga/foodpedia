@@ -16,14 +16,15 @@ import { GptSession } from "@/models/message";
 import { useEffect } from "react";
 
 interface NavmainProps {
-  chatSessions: GptSession[];
+  initialSessions: GptSession[];
 }
 
-export function NavMain({ chatSessions }: NavmainProps) {
+export function NavMain({ initialSessions }: NavmainProps) {
   const [chatHistory, setChatHistory] = useAtom(useGptSessionAtom);
   useEffect(() => {
-    setChatHistory(chatSessions);
-  }, [chatSessions, setChatHistory]);
+    setChatHistory(initialSessions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SidebarGroup>
