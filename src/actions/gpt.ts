@@ -6,6 +6,7 @@ import {
   promptSuggestionRecipe,
 } from "@/lib/ai/openai-client";
 import { auth } from "@/lib/auth";
+import { SessionNotFound } from "@/models/error";
 import { GptRecipeSuggestions } from "@/models/gpt";
 import { GptSession, Message } from "@/models/message";
 import { and, desc, eq, isNull } from "drizzle-orm";
@@ -151,21 +152,35 @@ export async function getGptSession() {
 }
 
 export async function getHistoryChatGpt(sessionId: string) {
-  const result = await drizzleDb
-    .select()
-    .from(gptMessage)
-    .where(eq(gptMessage.sessionId, sessionId));
+  try {
+    const session = await drizzleDb
+      .select({ id: gptSession.id })
+      .from(gptSession)
+      .where(and(eq(gptSession.id, sessionId), isNull(gptSession.deletedAt)));
 
-  const messageMap: Message[] = result.map((e) => ({
-    id: e.sessionId,
-    answerType: e.answerType,
-    role: e.senderRole,
-    content:
-      e.answerType === "recipe_suggestions"
-        ? (JSON.parse(e.message) as GptRecipeSuggestions[])
-        : e.message,
-    timestamp: e.createdAt,
-  }));
+    if (session.length === 0) {
+      return new SessionNotFound("Session not found");
+    }
 
-  return messageMap;
+    const result = await drizzleDb
+      .select()
+      .from(gptMessage)
+      .where(eq(gptMessage.sessionId, sessionId));
+
+    const messageMap: Message[] = result.map((e) => ({
+      id: e.sessionId,
+      answerType: e.answerType,
+      role: e.senderRole,
+      content:
+        e.answerType === "recipe_suggestions"
+          ? (JSON.parse(e.message) as GptRecipeSuggestions[])
+          : e.message,
+      timestamp: e.createdAt,
+    }));
+
+    return messageMap;
+  } catch (error) {
+    console.error(`failed get history message: ${error}`);
+    return [];
+  }
 }
