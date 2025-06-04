@@ -22,9 +22,16 @@ export const metadata: Metadata = {
     siteName: "🥘 Foodpedia",
     description:
       "A social food recipe application that you can share an experience of cooking or ask AI to give you suggestion for food recipe",
+    url: "https://foodpedia-orcin.vercel.app/",
+    images: [
+      {
+        url: "https://pbs.twimg.com/media/GskuMrIasAcWfnD?format=jpg&name=small",
+      },
+    ],
   },
   twitter: {
     site: "🥘 Foodpedia",
+    images: "https://pbs.twimg.com/media/GskuMrIasAcWfnD?format=jpg&name=small",
   },
 };
 
