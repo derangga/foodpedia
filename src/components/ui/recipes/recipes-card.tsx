@@ -27,7 +27,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
         </CardHeader>
         <CardContent className="p-4">
           <h3 className="font-semibold text-gray-900 mb-1">{recipe.title}</h3>
-          <p className="text-sm text-gray-600 mb-2">{recipe.userName}</p>
+          <p className="text-sm text-gray-600 mb-2">{recipe.username}</p>
           <p className="text-xs text-gray-500">
             {format(recipe.createdAt || new Date(), "MMMM d, yyyy")}
           </p>
