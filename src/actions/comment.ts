@@ -2,10 +2,12 @@
 import drizzleDb from "@/db";
 import { comments, user } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { CommentSchema } from "@/models/comment";
 import { tryCatch } from "@/utils/try-catch";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { ZodError } from "zod";
 
 export async function getCommentsRecipe(recipeId: number) {
   const result = await tryCatch(
@@ -37,26 +39,29 @@ export async function postCommentRecipe(
     return Error("You need a login to post the comment");
   }
 
-  const id = formData.get("id") as string;
-  const comment = formData.get("comment") as string;
+  try {
+    const comment = CommentSchema.parse({
+      recipeId: parseInt(formData.get("id") as string),
+      comment: formData.get("comment") as string,
+    });
 
-  const commentValue: typeof comments.$inferInsert = {
-    userId: session.user.id,
-    recipeId: parseInt(id),
-    comment: comment,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    const commentValue: typeof comments.$inferInsert = {
+      userId: session.user.id,
+      recipeId: comment.recipeId,
+      comment: comment.comment,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-  const result = await tryCatch(
-    drizzleDb.insert(comments).values(commentValue).returning()
-  );
+    await drizzleDb.insert(comments).values(commentValue).returning();
 
-  if (result.error) {
-    console.error(`failed post comment: ${result.error}`);
+    revalidatePath(`/recipes/${comment.recipeId}`);
+    return true;
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return Error("Please post a valid comment");
+    }
+    console.error(`failed post comment: ${error}`);
     return Error("Can't post a comment right know, please try again later");
   }
-
-  revalidatePath(`/recipes/${id}`);
-  return true;
 }

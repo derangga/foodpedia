@@ -6,6 +6,7 @@ import { getRecipeByUser, getRecipeFavorite } from "@/actions/recipe";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { getProfiles } from "@/actions/user";
+import EditBioDialog from "@/components/ui/profiles/edit-bio-dialog";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -42,9 +43,10 @@ export default async function Page() {
 
         {/* Profile Info */}
         <div className="flex-1">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4 w-fit">
             <h1 className="text-2xl font-semibold">{profile.name}</h1>
             <span className="text-gray-600">{username}</span>
+            <EditBioDialog bio={profile.bio} />
           </div>
 
           {/* Stats */}
