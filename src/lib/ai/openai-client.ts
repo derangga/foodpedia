@@ -16,7 +16,7 @@ const removeBackticks = (input: string | null) => {
 export async function promptSuggestionRecipe(command: string) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "qwen/qwen3-32b:free",
+      model: "qwen/qwen3-8b:free",
       messages: [
         { role: "system", content: CHEF_AI_PROMPT },
         { role: "user", content: command },
@@ -36,7 +36,7 @@ export async function promptSuggestionRecipe(command: string) {
 export async function promptAskRecipe(language: string, command: string) {
   try {
     const completion = await openai.chat.completions.create({
-      model: "qwen/qwen3-32b:free",
+      model: "qwen/qwen3-8b:free",
       messages: [
         { role: "system", content: askingRecipePrompt(language) },
         { role: "user", content: command },
